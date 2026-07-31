@@ -1,25 +1,32 @@
-var builder = WebApplication.CreateBuilder(args);
+using Microsoft.EntityFrameworkCore;
+using Mukies_Cookies.Context;
 
-// Add services to the container.
+var construtor = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+construtor.Services.AddControllers();
 
-var app = builder.Build();
+var conexao = construtor.Configuration
+    .GetConnectionString("ConexaoPadrao");
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+construtor.Services.AddDbContext<ContextBancoDados>(
+    opcoes => opcoes.UseSqlServer(conexao)
+);
+
+construtor.Services.AddEndpointsApiExplorer();
+construtor.Services.AddSwaggerGen();
+
+var aplicacao = construtor.Build();
+
+if (aplicacao.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    aplicacao.UseSwagger();
+    aplicacao.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+aplicacao.UseHttpsRedirection();
 
-app.UseAuthorization();
+aplicacao.UseAuthorization();
 
-app.MapControllers();
+aplicacao.MapControllers();
 
-app.Run();
+aplicacao.Run();

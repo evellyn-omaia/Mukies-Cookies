@@ -16,6 +16,6 @@ public class Produto
 
     public Categoria Categoria { get; set; } = null!;
 
-    public ICollection<ItemPedido> ItensPedido { get; set; }
+    public List<ItemPedido> ItensPedido { get; set; }
         = new List<ItemPedido>();
 }
