@@ -1,4 +1,5 @@
-namespace Mukies_Cookies.Enums;
+
+namespace Mukies_Cookies.Enumeradores;
 
 public enum StatusPedido
 {

@@ -8,5 +8,6 @@ public class Categoria
 
     public string? Descricao { get; set; }
 
-    public List<Produto> Produtos { get; set; } = [];
+    public List<Produto> Produtos { get; set; }
+        = new List<Produto>();
 }

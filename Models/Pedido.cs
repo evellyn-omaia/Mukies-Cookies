@@ -1,4 +1,4 @@
-using Mukies_Cookies.Enums;
+using Mukies_Cookies.Enumeradores;
 
 namespace Mukies_Cookies.Models;
 
@@ -21,6 +21,6 @@ public class Pedido
 
     public decimal ValorTotal { get; set; }
 
-    public ICollection<ItemPedido> ItensPedido { get; set; }
+    public List<ItemPedido> ItensPedido { get; set; }
         = new List<ItemPedido>();
 }
