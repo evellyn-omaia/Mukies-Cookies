@@ -1,11 +1,11 @@
-
 namespace Mukies_Cookies.Enumeradores;
 
 public enum StatusPedido
 {
-    Pendente = 1,
-    EmProducao = 2,
-    Pronto = 3,
-    Entregue = 4,
-    Cancelado = 5
+    AguardandoPagamento = 1,
+    Pago = 2,
+    EmProducao = 3,
+    Pronto = 4,
+    Entregue = 5,
+    Cancelado = 6
 }
