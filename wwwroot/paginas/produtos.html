@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Produtos | Mukies Cookies</title>
+
+    <link
+        rel="stylesheet"
+        href="../estilos/global.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="../estilos/produtos.css"
+    >
+</head>
+
+<body>
+    <aside class="menu-lateral">
+        <div class="marca">
+            <div class="icone-marca">🍪</div>
+
+            <div>
+                <h1>Mukies</h1>
+                <span>Cookies</span>
+            </div>
+        </div>
+
+        <nav class="navegacao">
+            <a href="/index.html">
+                <span>⌂</span>
+                Início
+            </a>
+
+            <a
+                href="/paginas/produtos.html"
+                class="ativo"
+            >
+                <span>▣</span>
+                Produtos
+            </a>
+
+            <a href="#">
+                <span>▤</span>
+                Pedidos
+            </a>
+
+            <a href="#">
+                <span>◫</span>
+                Categorias
+            </a>
+        </nav>
+    </aside>
+
+    <main class="conteudo-principal">
+        <header class="cabecalho-pagina">
+            <div>
+                <h2>Produtos</h2>
+
+                <p>
+                    Gerencie os cookies disponíveis no catálogo.
+                </p>
+            </div>
+
+            <button
+                id="botaoNovoProduto"
+                class="botao-principal"
+                type="button"
+            >
+                + Novo produto
+            </button>
+        </header>
+
+        <section class="area-filtros">
+            <div class="campo-busca">
+                <label for="buscaNome">
+                    Buscar produto
+                </label>
+
+                <input
+                    id="buscaNome"
+                    type="search"
+                    placeholder="Digite o nome do produto"
+                >
+            </div>
+
+            <div class="campo-filtro">
+                <label for="filtroCategoria">
+                    Categoria
+                </label>
+
+                <select id="filtroCategoria">
+                    <option value="">
+                        Todas as categorias
+                    </option>
+                </select>
+            </div>
+
+            <div class="campo-filtro">
+                <label for="filtroDisponibilidade">
+                    Disponibilidade
+                </label>
+
+                <select id="filtroDisponibilidade">
+                    <option value="">
+                        Todos
+                    </option>
+
+                    <option value="true">
+                        Disponíveis
+                    </option>
+
+                    <option value="false">
+                        Indisponíveis
+                    </option>
+                </select>
+            </div>
+        </section>
+
+        <section class="secao-produtos">
+            <div class="titulo-secao">
+                <h3>Lista de produtos</h3>
+
+                <span id="quantidadeProdutos">
+                    0 produtos
+                </span>
+            </div>
+
+            <div
+                id="mensagemCarregamento"
+                class="mensagem"
+            >
+                Carregando produtos...
+            </div>
+
+            <div
+                id="mensagemErro"
+                class="mensagem erro escondido"
+            ></div>
+
+            <div
+                id="listaProdutos"
+                class="grade-produtos"
+            ></div>
+        </section>
+    </main>
+
+    <div
+        id="modalProduto"
+        class="modal escondido"
+    >
+        <div class="modal-conteudo">
+            <div class="modal-cabecalho">
+                <div>
+                    <h3 id="tituloModal">
+                        Novo produto
+                    </h3>
+
+                    <p>
+                        Preencha as informações do produto.
+                    </p>
+                </div>
+
+                <button
+                    id="botaoFecharModal"
+                    class="botao-fechar"
+                    type="button"
+                    aria-label="Fechar"
+                >
+                    ×
+                </button>
+            </div>
+
+            <form id="formularioProduto">
+                <input
+                    id="produtoId"
+                    type="hidden"
+                >
+
+                <div class="campo-formulario">
+                    <label for="nomeProduto">
+                        Nome
+                    </label>
+
+                    <input
+                        id="nomeProduto"
+                        type="text"
+                        maxlength="100"
+                        required
+                    >
+                </div>
+
+                <div class="campo-formulario">
+                    <label for="descricaoProduto">
+                        Descrição
+                    </label>
+
+                    <textarea
+                        id="descricaoProduto"
+                        maxlength="500"
+                        rows="4"
+                    ></textarea>
+                </div>
+
+                <div class="linha-formulario">
+                    <div class="campo-formulario">
+                        <label for="precoProduto">
+                            Preço
+                        </label>
+
+                        <input
+                            id="precoProduto"
+                            type="number"
+                            min="0.01"
+                            step="0.01"
+                            required
+                        >
+                    </div>
+
+                    <div class="campo-formulario">
+                        <label for="categoriaProduto">
+                            Categoria
+                        </label>
+
+                        <select
+                            id="categoriaProduto"
+                            required
+                        >
+                            <option value="">
+                                Selecione
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+                <label class="campo-checkbox">
+                    <input
+                        id="disponivelProduto"
+                        type="checkbox"
+                        checked
+                    >
+
+                    Produto disponível
+                </label>
+
+                <div
+                    id="erroFormulario"
+                    class="mensagem erro escondido"
+                ></div>
+
+                <div class="acoes-formulario">
+                    <button
+                        id="botaoCancelar"
+                        class="botao-secundario"
+                        type="button"
+                    >
+                        Cancelar
+                    </button>
+
+                    <button
+                        id="botaoSalvar"
+                        class="botao-principal"
+                        type="submit"
+                    >
+                        Salvar produto
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../scripts/api.js"></script>
+    <script src="../scripts/produtos.js"></script>
+</body>
+</html>

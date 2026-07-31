@@ -12,8 +12,6 @@ public class PedidoRespostaDto
 
     public DateTime DataPedido { get; set; }
 
-    public DateTime? DataEntrega { get; set; }
-
     public StatusPedido Status { get; set; }
 
     public string? Observacao { get; set; }
@@ -21,4 +19,6 @@ public class PedidoRespostaDto
     public decimal ValorTotal { get; set; }
 
     public int QuantidadeTotalItens { get; set; }
+
+    public List<ItemPedidoRespostaDto> ItensPedido { get; set; } = [];
 }

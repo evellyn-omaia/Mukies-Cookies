@@ -10,17 +10,14 @@ public class Pedido
 
     public string? TelefoneCliente { get; set; }
 
-    public DateTime DataPedido { get; set; } = DateTime.Now;
-
-    public DateTime? DataEntrega { get; set; }
+    public DateTime DataPedido { get; set; }
 
     public StatusPedido Status { get; set; }
-        = StatusPedido.Pendente;
+        = StatusPedido.AguardandoPagamento;
 
     public string? Observacao { get; set; }
 
     public decimal ValorTotal { get; set; }
 
-    public List<ItemPedido> ItensPedido { get; set; }
-        = new List<ItemPedido>();
+    public ICollection<ItemPedido> ItensPedido { get; set; } = [];
 }

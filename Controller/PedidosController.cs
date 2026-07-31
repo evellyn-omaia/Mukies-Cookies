@@ -19,10 +19,29 @@ public class PedidosController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult> Listar()
+    public async Task<ActionResult> Listar(
+        [FromQuery] StatusPedido? status,
+        [FromQuery] string? nomeCliente)
     {
-        var pedidos = await _contexto.Pedidos
+        var consulta = _contexto.Pedidos
             .AsNoTracking()
+            .AsQueryable();
+
+        if (status.HasValue)
+        {
+            consulta = consulta.Where(pedido =>
+                pedido.Status == status.Value
+            );
+        }
+
+        if (!string.IsNullOrWhiteSpace(nomeCliente))
+        {
+            consulta = consulta.Where(pedido =>
+                pedido.NomeCliente.Contains(nomeCliente)
+            );
+        }
+
+        var pedidos = await consulta
             .OrderByDescending(pedido => pedido.DataPedido)
             .Select(pedido => new PedidoRespostaDto
             {
@@ -30,12 +49,24 @@ public class PedidosController : ControllerBase
                 NomeCliente = pedido.NomeCliente,
                 TelefoneCliente = pedido.TelefoneCliente,
                 DataPedido = pedido.DataPedido,
-                DataEntrega = pedido.DataEntrega,
                 Status = pedido.Status,
                 Observacao = pedido.Observacao,
                 ValorTotal = pedido.ValorTotal,
+
                 QuantidadeTotalItens = pedido.ItensPedido
-                    .Sum(item => item.Quantidade)
+                    .Sum(item => item.Quantidade),
+
+                ItensPedido = pedido.ItensPedido
+                    .Select(item => new ItemPedidoRespostaDto
+                    {
+                        ProdutoId = item.ProdutoId,
+                        NomeProduto = item.Produto.Nome,
+                        Quantidade = item.Quantidade,
+                        PrecoUnitario = item.PrecoUnitario,
+                        Subtotal =
+                            item.Quantidade * item.PrecoUnitario
+                    })
+                    .ToList()
             })
             .ToListAsync();
 
@@ -54,12 +85,24 @@ public class PedidosController : ControllerBase
                 NomeCliente = pedido.NomeCliente,
                 TelefoneCliente = pedido.TelefoneCliente,
                 DataPedido = pedido.DataPedido,
-                DataEntrega = pedido.DataEntrega,
                 Status = pedido.Status,
                 Observacao = pedido.Observacao,
                 ValorTotal = pedido.ValorTotal,
+
                 QuantidadeTotalItens = pedido.ItensPedido
-                    .Sum(item => item.Quantidade)
+                    .Sum(item => item.Quantidade),
+
+                ItensPedido = pedido.ItensPedido
+                    .Select(item => new ItemPedidoRespostaDto
+                    {
+                        ProdutoId = item.ProdutoId,
+                        NomeProduto = item.Produto.Nome,
+                        Quantidade = item.Quantidade,
+                        PrecoUnitario = item.PrecoUnitario,
+                        Subtotal =
+                            item.Quantidade * item.PrecoUnitario
+                    })
+                    .ToList()
             })
             .FirstOrDefaultAsync();
 
@@ -91,9 +134,11 @@ public class PedidosController : ControllerBase
             .ToList();
 
         var produtos = await _contexto.Produtos
+            .AsNoTracking()
             .Where(produto =>
                 produtosIds.Contains(produto.Id) &&
-                produto.Disponivel)
+                produto.Disponivel
+            )
             .ToListAsync();
 
         if (produtos.Count != produtosIds.Count)
@@ -108,15 +153,15 @@ public class PedidosController : ControllerBase
             NomeCliente = dados.NomeCliente,
             TelefoneCliente = dados.TelefoneCliente,
             DataPedido = DateTime.Now,
-            DataEntrega = dados.DataEntrega,
             Observacao = dados.Observacao,
-            Status = StatusPedido.Pendente
+            Status = StatusPedido.AguardandoPagamento
         };
 
         foreach (var itemRecebido in dados.Itens)
         {
             var produto = produtos.First(produto =>
-                produto.Id == itemRecebido.ProdutoId);
+                produto.Id == itemRecebido.ProdutoId
+            );
 
             pedido.ItensPedido.Add(new ItemPedido
             {
@@ -127,7 +172,8 @@ public class PedidosController : ControllerBase
         }
 
         pedido.ValorTotal = pedido.ItensPedido.Sum(item =>
-            item.Quantidade * item.PrecoUnitario);
+            item.Quantidade * item.PrecoUnitario
+        );
 
         _contexto.Pedidos.Add(pedido);
         await _contexto.SaveChangesAsync();
@@ -138,12 +184,31 @@ public class PedidosController : ControllerBase
             NomeCliente = pedido.NomeCliente,
             TelefoneCliente = pedido.TelefoneCliente,
             DataPedido = pedido.DataPedido,
-            DataEntrega = pedido.DataEntrega,
             Status = pedido.Status,
             Observacao = pedido.Observacao,
             ValorTotal = pedido.ValorTotal,
+
             QuantidadeTotalItens = pedido.ItensPedido
-                .Sum(item => item.Quantidade)
+                .Sum(item => item.Quantidade),
+
+            ItensPedido = pedido.ItensPedido
+                .Select(item =>
+                {
+                    var produto = produtos.First(produto =>
+                        produto.Id == item.ProdutoId
+                    );
+
+                    return new ItemPedidoRespostaDto
+                    {
+                        ProdutoId = item.ProdutoId,
+                        NomeProduto = produto.Nome,
+                        Quantidade = item.Quantidade,
+                        PrecoUnitario = item.PrecoUnitario,
+                        Subtotal =
+                            item.Quantidade * item.PrecoUnitario
+                    };
+                })
+                .ToList()
         };
 
         return CreatedAtAction(
@@ -151,5 +216,47 @@ public class PedidosController : ControllerBase
             new { id = pedido.Id },
             resposta
         );
+    }
+
+    [HttpPatch("{id}/status")]
+    public async Task<ActionResult> AlterarStatus(
+        int id,
+        StatusPedidoEntradaDto dados)
+    {
+        var pedido = await _contexto.Pedidos
+            .FirstOrDefaultAsync(pedido => pedido.Id == id);
+
+        if (pedido == null)
+        {
+            return NotFound("Pedido não encontrado.");
+        }
+
+        if (!Enum.IsDefined(typeof(StatusPedido), dados.Status))
+        {
+            return BadRequest("Status inválido.");
+        }
+
+        pedido.Status = dados.Status;
+
+        await _contexto.SaveChangesAsync();
+
+        return NoContent();
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<ActionResult> Excluir(int id)
+    {
+        var pedido = await _contexto.Pedidos
+            .FirstOrDefaultAsync(pedido => pedido.Id == id);
+
+        if (pedido == null)
+        {
+            return NotFound("Pedido não encontrado.");
+        }
+
+        _contexto.Pedidos.Remove(pedido);
+        await _contexto.SaveChangesAsync();
+
+        return NoContent();
     }
 }
