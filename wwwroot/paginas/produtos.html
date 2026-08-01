@@ -1,281 +1,197 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
-    <title>Produtos | Mukies Cookies</title>
-
-    <link
-        rel="stylesheet"
-        href="../estilos/global.css"
-    >
-
-    <link
-        rel="stylesheet"
-        href="../estilos/produtos.css"
-    >
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Gerenciamento de produtos da Mukies Cookies">
+  <title>Produtos | Mukies Cookies</title>
+  <!-- Fontes usadas no visual da página -->
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&amp;family=Playfair+Display:wght@600;700&amp;display=swap" rel="stylesheet">
+  <!-- Biblioteca que desenha os ícones data-lucide -->
+  <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js" defer></script>
+  <link rel="stylesheet" href="../estilos/global.css">
+  <link rel="stylesheet" href="../estilos/produtos.css">
 </head>
+<body class="pagina-produtos">
+  <div class="aplicacao">
+    <aside class="barra-lateral">
+      <a class="logo" href="../index.html" aria-label="Mukies Cookies — início">
+        <img class="logo-cookie-imagem" src="../imagens/cookie-classico.png" alt="">
+        <strong class="logo-nome">Mukies Cookies</strong>
+        <span class="logo-detalhe" aria-hidden="true">♡</span>
+      </a>
 
-<body>
-    <aside class="menu-lateral">
-        <div class="marca">
-            <div class="icone-marca">🍪</div>
+      <nav class="menu" aria-label="Menu principal">
+        <a href="../index.html"><i data-lucide="house" aria-hidden="true"></i><span>Início</span></a>
+        <a class="ativo" href="./produtos.html" aria-current="page"><i data-lucide="shopping-bag" aria-hidden="true"></i><span>Produtos</span></a>
+        <a href="./pedidos.html"><i data-lucide="notebook-tabs" aria-hidden="true"></i><span>Pedidos</span></a>
+        <a href="#" aria-disabled="true"><i data-lucide="layout-grid" aria-hidden="true"></i><span>Categorias</span></a>
+        <a href="#" aria-disabled="true"><i data-lucide="chart-no-axes-column-increasing" aria-hidden="true"></i><span>Relatórios</span></a>
+        <a href="#" aria-disabled="true"><i data-lucide="settings" aria-hidden="true"></i><span>Configurações</span></a>
+      </nav>
 
-            <div>
-                <h1>Mukies</h1>
-                <span>Cookies</span>
-            </div>
-        </div>
-
-        <nav class="navegacao">
-            <a href="/index.html">
-                <span>⌂</span>
-                Início
-            </a>
-
-            <a
-                href="/paginas/produtos.html"
-                class="ativo"
-            >
-                <span>▣</span>
-                Produtos
-            </a>
-
-            <a href="#">
-                <span>▤</span>
-                Pedidos
-            </a>
-
-            <a href="#">
-                <span>◫</span>
-                Categorias
-            </a>
-        </nav>
+      <div class="decoracao-lateral" aria-hidden="true">
+        <img src="../imagens/ilustracao-cookie.png" alt="">
+        <div class="bilhete">Feito com amor<br>em cada cookie! <span>♡</span></div>
+      </div>
     </aside>
 
-    <main class="conteudo-principal">
-        <header class="cabecalho-pagina">
-            <div>
-                <h2>Produtos</h2>
+    <section class="area-conteudo">
+      <header class="barra-superior">
+        <label class="busca-global" for="buscaGlobalProdutos">
+          <i data-lucide="search" aria-hidden="true"></i>
+          <input id="buscaGlobalProdutos" type="search" maxlength="100" autocomplete="off" placeholder="Buscar pedidos, clientes ou produtos...">
+        </label>
+        <button class="notificacao" type="button" aria-label="Notificações">
+          <i data-lucide="bell" aria-hidden="true"></i><span></span>
+        </button>
+      </header>
 
-                <p>
-                    Gerencie os cookies disponíveis no catálogo.
-                </p>
+      <main class="pagina">
+        <div class="titulo-linha">
+          <div>
+            <div class="titulo-com-coracao">
+              <h1>Produtos</h1><span aria-hidden="true">♡</span>
             </div>
-
-            <button
-                id="botaoNovoProduto"
-                class="botao-principal"
-                type="button"
-            >
-                + Novo produto
-            </button>
-        </header>
-
-        <section class="area-filtros">
-            <div class="campo-busca">
-                <label for="buscaNome">
-                    Buscar produto
-                </label>
-
-                <input
-                    id="buscaNome"
-                    type="search"
-                    placeholder="Digite o nome do produto"
-                >
-            </div>
-
-            <div class="campo-filtro">
-                <label for="filtroCategoria">
-                    Categoria
-                </label>
-
-                <select id="filtroCategoria">
-                    <option value="">
-                        Todas as categorias
-                    </option>
-                </select>
-            </div>
-
-            <div class="campo-filtro">
-                <label for="filtroDisponibilidade">
-                    Disponibilidade
-                </label>
-
-                <select id="filtroDisponibilidade">
-                    <option value="">
-                        Todos
-                    </option>
-
-                    <option value="true">
-                        Disponíveis
-                    </option>
-
-                    <option value="false">
-                        Indisponíveis
-                    </option>
-                </select>
-            </div>
-        </section>
-
-        <section class="secao-produtos">
-            <div class="titulo-secao">
-                <h3>Lista de produtos</h3>
-
-                <span id="quantidadeProdutos">
-                    0 produtos
-                </span>
-            </div>
-
-            <div
-                id="mensagemCarregamento"
-                class="mensagem"
-            >
-                Carregando produtos...
-            </div>
-
-            <div
-                id="mensagemErro"
-                class="mensagem erro escondido"
-            ></div>
-
-            <div
-                id="listaProdutos"
-                class="grade-produtos"
-            ></div>
-        </section>
-    </main>
-
-    <div
-        id="modalProduto"
-        class="modal escondido"
-    >
-        <div class="modal-conteudo">
-            <div class="modal-cabecalho">
-                <div>
-                    <h3 id="tituloModal">
-                        Novo produto
-                    </h3>
-
-                    <p>
-                        Preencha as informações do produto.
-                    </p>
-                </div>
-
-                <button
-                    id="botaoFecharModal"
-                    class="botao-fechar"
-                    type="button"
-                    aria-label="Fechar"
-                >
-                    ×
-                </button>
-            </div>
-
-            <form id="formularioProduto">
-                <input
-                    id="produtoId"
-                    type="hidden"
-                >
-
-                <div class="campo-formulario">
-                    <label for="nomeProduto">
-                        Nome
-                    </label>
-
-                    <input
-                        id="nomeProduto"
-                        type="text"
-                        maxlength="100"
-                        required
-                    >
-                </div>
-
-                <div class="campo-formulario">
-                    <label for="descricaoProduto">
-                        Descrição
-                    </label>
-
-                    <textarea
-                        id="descricaoProduto"
-                        maxlength="500"
-                        rows="4"
-                    ></textarea>
-                </div>
-
-                <div class="linha-formulario">
-                    <div class="campo-formulario">
-                        <label for="precoProduto">
-                            Preço
-                        </label>
-
-                        <input
-                            id="precoProduto"
-                            type="number"
-                            min="0.01"
-                            step="0.01"
-                            required
-                        >
-                    </div>
-
-                    <div class="campo-formulario">
-                        <label for="categoriaProduto">
-                            Categoria
-                        </label>
-
-                        <select
-                            id="categoriaProduto"
-                            required
-                        >
-                            <option value="">
-                                Selecione
-                            </option>
-                        </select>
-                    </div>
-                </div>
-
-                <label class="campo-checkbox">
-                    <input
-                        id="disponivelProduto"
-                        type="checkbox"
-                        checked
-                    >
-
-                    Produto disponível
-                </label>
-
-                <div
-                    id="erroFormulario"
-                    class="mensagem erro escondido"
-                ></div>
-
-                <div class="acoes-formulario">
-                    <button
-                        id="botaoCancelar"
-                        class="botao-secundario"
-                        type="button"
-                    >
-                        Cancelar
-                    </button>
-
-                    <button
-                        id="botaoSalvar"
-                        class="botao-principal"
-                        type="submit"
-                    >
-                        Salvar produto
-                    </button>
-                </div>
-            </form>
+            <p>Gerencie os cookies cadastrados</p>
+          </div>
+          <button class="botao-destaque" id="botaoNovoProduto" type="button">
+            <i data-lucide="plus" aria-hidden="true"></i><span>Novo produto</span>
+          </button>
         </div>
-    </div>
 
-    <script src="../scripts/api.js"></script>
-    <script src="../scripts/produtos.js"></script>
+        <section class="resumos" aria-label="Resumo dos produtos">
+          <button class="resumo rosa ativo" type="button" data-filtro="todos" aria-pressed="true">
+            <span class="icone-resumo cookie" aria-hidden="true">🍪</span>
+            <span class="conteudo-resumo">
+              <strong id="totalProdutos">0</strong>
+              <span class="rotulo-resumo">Total de produtos</span>
+              <span class="link-resumo">Ver todos <i data-lucide="arrow-right" aria-hidden="true"></i></span>
+            </span>
+          </button>
+          <button class="resumo verde" type="button" data-filtro="true" aria-pressed="false">
+            <span class="icone-resumo" aria-hidden="true"><i data-lucide="circle-check-big"></i></span>
+            <span class="conteudo-resumo">
+              <strong id="produtosDisponiveis">0</strong>
+              <span class="rotulo-resumo">Disponíveis</span>
+              <span class="link-resumo">Ver disponíveis <i data-lucide="arrow-right" aria-hidden="true"></i></span>
+            </span>
+          </button>
+          <button class="resumo laranja" type="button" data-filtro="false" aria-pressed="false">
+            <span class="icone-resumo" aria-hidden="true"><i data-lucide="circle-x"></i></span>
+            <span class="conteudo-resumo">
+              <strong id="produtosIndisponiveis">0</strong>
+              <span class="rotulo-resumo">Indisponíveis</span>
+              <span class="link-resumo">Ver indisponíveis <i data-lucide="arrow-right" aria-hidden="true"></i></span>
+            </span>
+          </button>
+        </section>
+
+        <section class="painel-lista" aria-labelledby="tituloListaProdutos">
+          <h2 class="somente-leitor" id="tituloListaProdutos">Lista de produtos</h2>
+          <div class="filtros">
+            <label class="busca-produto" for="buscaNome">
+              <i data-lucide="search" aria-hidden="true"></i>
+              <input id="buscaNome" type="search" maxlength="100" autocomplete="off" placeholder="Buscar produtos...">
+            </label>
+            <label class="seletor-categoria" for="filtroCategoria">
+              <span class="somente-leitor">Filtrar por categoria</span>
+              <select id="filtroCategoria">
+                <option value="">Todas as categorias</option>
+              </select>
+              <i data-lucide="chevron-down" aria-hidden="true"></i>
+            </label>
+            <label class="interruptor" for="filtroDisponibilidade">
+              <input id="filtroDisponibilidade" type="checkbox">
+              <span class="trilho" aria-hidden="true"><span></span></span>
+              <span>Mostrar apenas disponíveis</span>
+            </label>
+          </div>
+
+          <div id="mensagemErro" class="aviso erro escondido" role="alert"></div>
+          <div id="mensagemCarregamento" class="aviso carregando" role="status">
+            <span class="spinner" aria-hidden="true"></span>Carregando produtos...
+          </div>
+
+          <div class="tabela-responsiva" id="regiaoTabela" aria-live="polite" aria-busy="true">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Produto</th>
+                  <th scope="col">Categoria</th>
+                  <th scope="col">Preço</th>
+                  <th scope="col">Disponibilidade</th>
+                  <th scope="col">Ações</th>
+                </tr>
+              </thead>
+              <tbody id="corpoTabela"></tbody>
+            </table>
+          </div>
+
+          <footer class="rodape-tabela">
+            <span id="textoPaginacao">Mostrando 0 produtos</span>
+            <nav class="paginacao" id="paginacao" aria-label="Paginação dos produtos"></nav>
+          </footer>
+        </section>
+      </main>
+    </section>
+  </div>
+
+  <div class="modal escondido" id="modalProduto" role="dialog" aria-modal="true" aria-labelledby="tituloModal" aria-hidden="true">
+    <div class="modal-caixa" tabindex="-1">
+      <button class="fechar-modal" id="botaoFecharModal" type="button" aria-label="Fechar">
+        <i data-lucide="x" aria-hidden="true"></i>
+      </button>
+      <div class="modal-titulo">
+        <span aria-hidden="true">🍪</span>
+        <div><h2 id="tituloModal">Novo produto</h2><p>Preencha as informações do cookie.</p></div>
+      </div>
+      <form id="formularioProduto">
+        <input type="hidden" id="produtoId">
+        <label for="nomeProduto">Nome <span class="obrigatorio" aria-hidden="true">*</span>
+          <input id="nomeProduto" maxlength="100" autocomplete="off" required>
+        </label>
+        <label for="descricaoProduto">Descrição
+          <textarea id="descricaoProduto" maxlength="300" rows="3" placeholder="Conte o que torna este cookie especial"></textarea>
+          <small class="contador"><span id="contadorDescricao">0</span>/300</small>
+        </label>
+        <div class="linha-formulario">
+          <label for="precoProduto">Preço <span class="obrigatorio" aria-hidden="true">*</span>
+            <span class="campo-preco"><span>R$</span><input id="precoProduto" type="number" min="0.01" max="9999" step="0.01" inputmode="decimal" placeholder="0,00" required></span>
+          </label>
+          <label for="categoriaProduto">Categoria <span class="obrigatorio" aria-hidden="true">*</span>
+            <select id="categoriaProduto" required><option value="">Selecione</option></select>
+          </label>
+        </div>
+        <label class="check-form" for="disponivelProduto">
+          <input id="disponivelProduto" type="checkbox" checked><span>Produto disponível para venda</span>
+        </label>
+        <div id="erroFormulario" class="aviso erro escondido" role="alert"></div>
+        <div class="acoes-modal">
+          <button type="button" class="botao-secundario" id="botaoCancelar">Cancelar</button>
+          <button type="submit" class="botao-destaque" id="botaoSalvar"><span>Salvar produto</span></button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal modal-confirmacao escondido" id="modalConfirmacao" role="alertdialog" aria-modal="true" aria-labelledby="tituloConfirmacao" aria-describedby="textoConfirmacao" aria-hidden="true">
+    <div class="modal-caixa confirmacao-caixa" tabindex="-1">
+      <div class="icone-confirmacao" aria-hidden="true"><i data-lucide="trash-2"></i></div>
+      <h2 id="tituloConfirmacao">Excluir produto?</h2>
+      <p id="textoConfirmacao">Esta ação não poderá ser desfeita.</p>
+      <div class="acoes-confirmacao">
+        <button type="button" class="botao-secundario" id="botaoCancelarExclusao">Cancelar</button>
+        <button type="button" class="botao-perigo" id="botaoConfirmarExclusao"><span>Excluir produto</span></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast escondido" id="toast" role="status" aria-live="polite">
+    <i data-lucide="circle-check" aria-hidden="true"></i><span></span>
+  </div>
+
+  <script src="../scripts/api.js"></script>
+  <script src="../scripts/produtos.js"></script>
 </body>
 </html>

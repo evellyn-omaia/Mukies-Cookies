@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Acompanhe e organize os pedidos da Mukies Cookies.">
+  <title>Pedidos | Mukies Cookies</title>
+  <!-- Fontes usadas no visual da página -->
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&amp;family=Playfair+Display:wght@600;700&amp;display=swap" rel="stylesheet">
+  <!-- Biblioteca que desenha os ícones data-lucide -->
+  <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js" defer></script>
+  <link rel="stylesheet" href="../estilos/global.css">
+  <link rel="stylesheet" href="../estilos/pedidos.css">
+</head>
+<body>
+  <div class="aplicacao">
+    <aside class="barra-lateral">
+      <a class="logo" href="../index.html" aria-label="Ir para o início">
+        <img class="logo-cookie-imagem" src="../imagens/cookie-classico.png" alt="">
+        <strong class="logo-nome">Mukies Cookies</strong>
+        <span class="logo-detalhe" aria-hidden="true">♡</span>
+      </a>
+
+      <nav class="menu" aria-label="Menu principal">
+        <a href="../index.html"><i data-lucide="house"></i><span>Início</span></a>
+        <a href="./produtos.html"><i data-lucide="shopping-bag"></i><span>Produtos</span></a>
+        <a class="ativo" href="./pedidos.html" aria-current="page"><i data-lucide="notebook-tabs"></i><span>Pedidos</span></a>
+        <a href="#"><i data-lucide="layout-grid"></i><span>Categorias</span></a>
+        <a href="#"><i data-lucide="chart-no-axes-column-increasing"></i><span>Relatórios</span></a>
+        <a href="#"><i data-lucide="users"></i><span>Clientes</span></a>
+        <a href="#"><i data-lucide="settings"></i><span>Configurações</span></a>
+      </nav>
+
+      <div class="decoracao-lateral" aria-hidden="true">
+        <img src="../imagens/ilustracao-cookie.png" alt="">
+        <div class="bilhete">Feito com amor<br>em cada cookie! <span>♡</span></div>
+      </div>
+    </aside>
+
+    <section class="area-conteudo">
+      <header class="barra-superior">
+        <label class="busca-global">
+          <i data-lucide="search"></i>
+          <input id="buscaGlobal" type="search" placeholder="Buscar pedidos, clientes ou produtos..." aria-label="Busca global">
+        </label>
+        <button class="notificacao" type="button" aria-label="Notificações"><i data-lucide="bell"></i><span></span></button>
+      </header>
+
+      <main class="pagina pagina-pedidos">
+        <div class="titulo-linha">
+          <div>
+            <div class="titulo-com-coracao"><h1>Pedidos</h1><span>♡</span></div>
+            <p>Acompanhe e organize suas encomendas</p>
+          </div>
+          <button class="botao-destaque" id="botaoNovoPedido" type="button"><i data-lucide="circle-plus"></i>Novo pedido</button>
+        </div>
+
+        <section class="resumos-pedidos" aria-label="Resumo dos pedidos">
+          <article class="resumo-pedido resumo-pendente" data-status="1">
+            <div class="icone-resumo-pedido"><i data-lucide="clipboard-list"></i></div>
+            <div class="conteudo-resumo-pedido"><div class="numero-resumo" id="totalPendentes">0</div><p>Pendentes</p><button type="button">Ver pedidos <i data-lucide="arrow-right"></i></button></div>
+          </article>
+          <article class="resumo-pedido resumo-producao" data-status="3">
+            <div class="icone-resumo-pedido"><i data-lucide="cooking-pot"></i></div>
+            <div class="conteudo-resumo-pedido"><div class="numero-resumo" id="totalProducao">0</div><p>Em produção</p><button type="button">Ver pedidos <i data-lucide="arrow-right"></i></button></div>
+          </article>
+          <article class="resumo-pedido resumo-pronto" data-status="4">
+            <div class="icone-resumo-pedido"><i data-lucide="chef-hat"></i></div>
+            <div class="conteudo-resumo-pedido"><div class="numero-resumo" id="totalProntos">0</div><p>Prontos</p><button type="button">Ver pedidos <i data-lucide="arrow-right"></i></button></div>
+          </article>
+          <article class="resumo-pedido resumo-entregue" data-status="5">
+            <div class="icone-resumo-pedido"><i data-lucide="truck"></i></div>
+            <div class="conteudo-resumo-pedido"><div class="numero-resumo" id="totalEntregues">0</div><p>Entregues</p><button type="button">Ver pedidos <i data-lucide="arrow-right"></i></button></div>
+          </article>
+          <article class="resumo-pedido resumo-faturamento">
+            <div class="icone-resumo-pedido"><i data-lucide="badge-dollar-sign"></i></div>
+            <div class="conteudo-resumo-pedido"><div class="numero-resumo valor-resumo" id="totalFaturamento">R$ 0,00</div><p>Total do dia</p><button type="button">Ver relatório <i data-lucide="arrow-right"></i></button></div>
+          </article>
+        </section>
+
+        <section class="controles-pedidos" aria-label="Filtros de pedidos">
+          <label class="controle-select">
+            <i data-lucide="list-filter"></i>
+            <select id="filtroStatus" aria-label="Filtrar por status">
+              <option value="">Filtrar por status</option>
+              <option value="1">Aguardando pagamento</option>
+              <option value="2">Pago</option>
+              <option value="3">Em produção</option>
+              <option value="4">Pronto</option>
+              <option value="5">Entregue</option>
+              <option value="6">Cancelado</option>
+            </select>
+          </label>
+          <label class="controle-periodo" for="filtroPeriodo">
+            <i data-lucide="calendar-days" aria-hidden="true"></i>
+            <select id="filtroPeriodo" aria-label="Filtrar pedidos por período">
+              <option value="">Todos os períodos</option>
+              <option value="hoje">Hoje</option>
+              <option value="7dias">Últimos 7 dias</option>
+              <option value="30dias">Últimos 30 dias</option>
+            </select>
+            <i data-lucide="chevron-down" aria-hidden="true"></i>
+          </label>
+          <label class="busca-pedido"><i data-lucide="search"></i><input id="buscaPedido" type="search" placeholder="Buscar pedido ou cliente..." autocomplete="off"></label>
+        </section>
+
+        <div id="erroPedidos" class="aviso erro escondido" role="alert"></div>
+
+        <section class="grade-pedidos">
+          <div class="painel-pedidos">
+            <div id="carregandoPedidos" class="aviso">Carregando pedidos...</div>
+            <div class="tabela-pedidos-responsiva">
+              <table class="tabela-pedidos">
+                <thead>
+                  <tr><th>Pedido</th><th>Cliente</th><th>Data do pedido</th><th>Status</th><th>Valor total</th><th>Ações</th></tr>
+                </thead>
+                <tbody id="corpoPedidos"></tbody>
+              </table>
+            </div>
+            <footer class="rodape-pedidos">
+              <span id="textoPaginacao">Mostrando 0 pedidos</span>
+              <div class="paginacao" id="paginacaoPedidos" aria-label="Paginação"></div>
+            </footer>
+          </div>
+
+          <aside class="painel-detalhes" id="detalhesPedido" aria-live="polite">
+            <div class="cabecalho-detalhes"><h2>Detalhes do pedido</h2><span>♡</span></div>
+            <div class="detalhes-vazio">
+              <div class="icone-detalhes-vazio"><i data-lucide="receipt-text"></i></div>
+              <strong>Selecione um pedido</strong>
+              <p>Os detalhes da encomenda aparecerão aqui.</p>
+            </div>
+          </aside>
+        </section>
+      </main>
+
+      <footer class="rodape-aplicacao">
+        <span class="assinatura-rodape">♡</span><span>Mukies Cookies © 2026 • Todos os direitos reservados.</span>
+        <span class="ajuda-rodape">Precisa de ajuda? <a href="mailto:contato@mukiescookies.com">Fale conosco</a> ♡</span>
+      </footer>
+    </section>
+  </div>
+
+  <div class="modal modal-pedido escondido" id="modalPedido" role="dialog" aria-modal="true" aria-labelledby="tituloModalPedido">
+    <div class="modal-caixa">
+      <button class="fechar-modal" id="fecharPedido" type="button" aria-label="Fechar"><i data-lucide="x"></i></button>
+      <div class="modal-titulo">
+        <span class="icone-modal-pedido"><i data-lucide="notebook-pen"></i></span>
+        <div><h2 id="tituloModalPedido">Novo pedido</h2><p>Preencha os dados da encomenda.</p></div>
+      </div>
+
+      <form id="formPedido">
+        <div class="linha-formulario dados-cliente-form">
+          <label>Nome do cliente<input id="nomeCliente" maxlength="100" placeholder="Ex.: Maria Oliveira" autocomplete="name" required></label>
+          <label>Telefone<input id="telefoneCliente" type="tel" maxlength="20" placeholder="(00) 00000-0000" autocomplete="tel"></label>
+        </div>
+        <label>Observação<textarea id="observacaoPedido" maxlength="500" rows="3" placeholder="Detalhes da entrega, preferências ou recados..."></textarea></label>
+
+        <section class="bloco-itens-form">
+          <div class="cabecalho-itens-form">
+            <div><h3>Itens do pedido</h3><p>Adicione os cookies e informe as quantidades.</p></div>
+            <button class="botao-adicionar-item" id="adicionarItem" type="button"><i data-lucide="plus"></i>Adicionar item</button>
+          </div>
+          <div class="itens-pedido-form" id="itensPedido"></div>
+        </section>
+
+        <div class="total-novo-pedido"><span>Total do pedido</span><strong id="totalNovoPedido">R$ 0,00</strong></div>
+        <div id="erroFormPedido" class="aviso erro escondido" role="alert"></div>
+        <div class="acoes-modal">
+          <button type="button" class="botao-secundario" id="cancelarPedido">Cancelar</button>
+          <button type="submit" class="botao-destaque" id="salvarPedido"><i data-lucide="check"></i>Salvar pedido</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="../scripts/api.js"></script>
+  <script src="../scripts/pedidos.js"></script>
+</body>
+</html>

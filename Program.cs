@@ -25,10 +25,10 @@ if (aplicacao.Environment.IsDevelopment())
 
 aplicacao.UseHttpsRedirection();
 
-aplicacao.UseAuthorization();
-
 aplicacao.UseDefaultFiles();
 aplicacao.UseStaticFiles();
+
+aplicacao.UseAuthorization();
 
 aplicacao.MapControllers();
 
