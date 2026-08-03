@@ -1,27 +1,415 @@
-const elementosCategorias={lista:document.getElementById("listaCategorias"),detalhe:document.getElementById("detalheCategoria"),busca:document.getElementById("buscaCategoria"),erro:document.getElementById("erroCategorias"),total:document.getElementById("totalCategorias"),maisUsada:document.getElementById("categoriaMaisUsada"),quantidadeMaisUsada:document.getElementById("quantidadeMaisUsada"),totalProdutos:document.getElementById("totalProdutosCategorias"),modal:document.getElementById("modalCategoria"),tituloModal:document.getElementById("tituloModalCategoria"),formulario:document.getElementById("formCategoria"),id:document.getElementById("categoriaId"),nome:document.getElementById("nomeCategoria"),descricao:document.getElementById("descricaoCategoria"),contador:document.getElementById("contadorCategoria"),erroForm:document.getElementById("erroFormCategoria"),salvar:document.getElementById("salvarCategoria"),modalExcluir:document.getElementById("modalExcluirCategoria"),textoExcluir:document.getElementById("textoExcluirCategoria"),confirmarExcluir:document.getElementById("confirmarExclusaoCategoria"),toast:document.getElementById("toastCategoria")};
-const estadoCategorias={categorias:[],produtos:[],selecionada:null,excluir:null,busca:""};
-document.addEventListener("DOMContentLoaded",iniciarCategorias);
-async function iniciarCategorias(){configurarEventosCategorias();atualizarIconesCategorias();await carregarCategorias();}
-function configurarEventosCategorias(){document.getElementById("novaCategoria").addEventListener("click",()=>abrirFormularioCategoria());document.getElementById("fecharModalCategoria").addEventListener("click",fecharFormularioCategoria);document.getElementById("cancelarCategoria").addEventListener("click",fecharFormularioCategoria);document.getElementById("cancelarExclusaoCategoria").addEventListener("click",fecharExclusaoCategoria);elementosCategorias.formulario.addEventListener("submit",salvarCategoria);elementosCategorias.confirmarExcluir.addEventListener("click",excluirCategoria);elementosCategorias.descricao.addEventListener("input",()=>elementosCategorias.contador.textContent=elementosCategorias.descricao.value.length);elementosCategorias.busca.addEventListener("input",()=>{estadoCategorias.busca=normalizarCategoria(elementosCategorias.busca.value);renderizarCategorias()});[elementosCategorias.modal,elementosCategorias.modalExcluir].forEach(modal=>modal.addEventListener("click",evento=>{if(evento.target===modal)modal===elementosCategorias.modal?fecharFormularioCategoria():fecharExclusaoCategoria()}));document.addEventListener("keydown",evento=>{if(evento.key==="Escape"){fecharFormularioCategoria();fecharExclusaoCategoria()}})}
-async function carregarCategorias(){elementosCategorias.erro.classList.add("escondido");try{const[categorias,produtos]=await Promise.all([requisicaoApi("/categorias"),requisicaoApi("/produtos")]);estadoCategorias.categorias=Array.isArray(categorias)?categorias:[];estadoCategorias.produtos=Array.isArray(produtos)?produtos:[];if(!estadoCategorias.categorias.some(c=>c.id===estadoCategorias.selecionada))estadoCategorias.selecionada=estadoCategorias.categorias[0]?.id||null;renderizarCategorias()}catch(erro){console.error(erro.message);elementosCategorias.erro.textContent="Não foi possível carregar as categorias. Tente novamente em instantes.";elementosCategorias.erro.classList.remove("escondido");estadoCategorias.categorias=[];estadoCategorias.produtos=[];renderizarCategorias()}}
-function renderizarCategorias(){const contagem=new Map(estadoCategorias.categorias.map(c=>[c.id,estadoCategorias.produtos.filter(p=>p.categoriaId===c.id).length]));const ordenadas=[...estadoCategorias.categorias].sort((a,b)=>(contagem.get(b.id)||0)-(contagem.get(a.id)||0));const maisUsada=ordenadas[0];elementosCategorias.total.textContent=estadoCategorias.categorias.length;elementosCategorias.totalProdutos.textContent=estadoCategorias.produtos.length;elementosCategorias.maisUsada.textContent=maisUsada?.nome||"—";elementosCategorias.quantidadeMaisUsada.textContent=`${maisUsada?contagem.get(maisUsada.id):0} produtos`;const filtradas=estadoCategorias.categorias.filter(c=>normalizarCategoria(`${c.nome} ${c.descricao||""}`).includes(estadoCategorias.busca)||estadoCategorias.produtos.some(p=>p.categoriaId===c.id&&normalizarCategoria(p.nome).includes(estadoCategorias.busca)));if(!filtradas.length){elementosCategorias.lista.innerHTML='<div class="estado-categorias">Nenhuma categoria encontrada.</div>'}else{elementosCategorias.lista.innerHTML=filtradas.map((categoria,indice)=>linhaCategoria(categoria,contagem.get(categoria.id)||0,indice)).join("")}configurarAcoesLista();renderizarDetalhe(maisUsada?.id);atualizarIconesCategorias()}
-function linhaCategoria(categoria,total,indice){return `<div class="linha-categoria${categoria.id===estadoCategorias.selecionada?" ativa":""}" data-id="${categoria.id}" tabindex="0"><div class="categoria-identificacao"><span class="miniatura-categoria">${miniaturaCategoria(categoria,indice)}</span><span class="categoria-texto"><strong>${escaparCategoria(categoria.nome)}</strong><small>${escaparCategoria(categoria.descricao||"Categoria de cookies artesanais.")}</small></span></div><span class="contagem-produtos"><strong>${total}</strong><small>produtos</small></span><span class="acoes-categoria"><button class="acao-categoria editar" type="button" data-id="${categoria.id}" aria-label="Editar ${escaparCategoria(categoria.nome)}"><i data-lucide="pencil"></i></button><button class="acao-categoria excluir" type="button" data-id="${categoria.id}" aria-label="Excluir ${escaparCategoria(categoria.nome)}"><i data-lucide="trash-2"></i></button></span></div>`}
-function configurarAcoesLista(){document.querySelectorAll(".linha-categoria").forEach(linha=>{linha.addEventListener("click",evento=>{if(evento.target.closest("button"))return;estadoCategorias.selecionada=Number(linha.dataset.id);renderizarCategorias()});linha.addEventListener("keydown",evento=>{if(evento.key==="Enter"){estadoCategorias.selecionada=Number(linha.dataset.id);renderizarCategorias()}})});document.querySelectorAll(".acao-categoria.editar").forEach(botao=>botao.addEventListener("click",()=>abrirFormularioCategoria(Number(botao.dataset.id))));document.querySelectorAll(".acao-categoria.excluir").forEach(botao=>botao.addEventListener("click",()=>abrirExclusaoCategoria(Number(botao.dataset.id))))}
-function renderizarDetalhe(idMaisUsada){const categoria=estadoCategorias.categorias.find(c=>c.id===estadoCategorias.selecionada);if(!categoria){elementosCategorias.detalhe.innerHTML='<div class="estado-categorias">Nenhuma categoria cadastrada.</div>';return}const produtos=estadoCategorias.produtos.filter(p=>p.categoriaId===categoria.id);const visiveis=produtos.slice(0,5);elementosCategorias.detalhe.innerHTML=`<section class="detalhe-topo"><div class="imagem-detalhe"><img src="../imagens/${imagemCategoria(categoria)}" alt=""></div><div class="info-detalhe"><div class="titulo-detalhe"><h2>${escaparCategoria(categoria.nome)}</h2>${categoria.id===idMaisUsada?'<span class="mais-usada">☆ Categoria mais usada</span>':""}</div><p>${escaparCategoria(categoria.descricao||"Categoria de cookies artesanais.")}</p><small>${produtos.length} produtos cadastrados</small><button class="editar-detalhe" type="button" data-editar-detalhe="${categoria.id}"><i data-lucide="pencil"></i>Editar categoria</button></div></section><section class="produtos-categoria"><header><h3>Produtos nesta categoria</h3><a href="./produtos.html">Ver todos os produtos <i data-lucide="arrow-right"></i></a></header><div class="lista-produtos-categoria">${visiveis.length?visiveis.map(produto=>`<div class="produto-categoria"><span class="produto-nome"><img src="../imagens/${imagemProdutoCategoria(produto)}" alt=""><span>${escaparCategoria(produto.nome)}</span></span><span>${formatarMoedaCategoria(produto.preco)}</span><span class="status-produto${produto.disponivel?"":" inativo"}">${produto.disponivel?"Ativo":"Inativo"}</span></div>`).join(""):'<div class="estado-categorias">Nenhum produto nesta categoria.</div>'}</div>${produtos.length>5?`<div class="mais-produtos">e mais ${produtos.length-5} produtos...</div>`:""}</section>`;elementosCategorias.detalhe.querySelector("[data-editar-detalhe]").addEventListener("click",()=>abrirFormularioCategoria(categoria.id));atualizarIconesCategorias()}
-function abrirFormularioCategoria(id){const categoria=estadoCategorias.categorias.find(c=>c.id===id);elementosCategorias.formulario.reset();elementosCategorias.id.value=categoria?.id||"";elementosCategorias.nome.value=categoria?.nome||"";elementosCategorias.descricao.value=categoria?.descricao||"";elementosCategorias.contador.textContent=elementosCategorias.descricao.value.length;elementosCategorias.tituloModal.textContent=categoria?"Editar categoria":"Nova categoria";elementosCategorias.erroForm.classList.add("escondido");abrirModalCategoria(elementosCategorias.modal);setTimeout(()=>elementosCategorias.nome.focus(),50)}
-function fecharFormularioCategoria(){fecharModalCategoria(elementosCategorias.modal)}
-async function salvarCategoria(evento){evento.preventDefault();const id=Number(elementosCategorias.id.value);const dados={nome:elementosCategorias.nome.value.trim(),descricao:elementosCategorias.descricao.value.trim()||null};if(!dados.nome){mostrarErroFormCategoria("Informe o nome da categoria.");return}elementosCategorias.salvar.disabled=true;elementosCategorias.salvar.textContent="Salvando...";try{const salva=await requisicaoApi(id?`/categorias/${id}`:"/categorias",{method:id?"PUT":"POST",body:JSON.stringify(dados)});fecharFormularioCategoria();estadoCategorias.selecionada=salva.id;await carregarCategorias();mostrarToastCategoria(id?"Categoria atualizada com sucesso!":"Categoria criada com sucesso!")}catch(erro){mostrarErroFormCategoria(erro.message)}finally{elementosCategorias.salvar.disabled=false;elementosCategorias.salvar.textContent="Salvar categoria"}}
-function abrirExclusaoCategoria(id){const categoria=estadoCategorias.categorias.find(c=>c.id===id);if(!categoria)return;estadoCategorias.excluir=id;elementosCategorias.textoExcluir.textContent=`Deseja excluir “${categoria.nome}”? A categoria precisa estar sem produtos.`;abrirModalCategoria(elementosCategorias.modalExcluir)}
-function fecharExclusaoCategoria(){estadoCategorias.excluir=null;fecharModalCategoria(elementosCategorias.modalExcluir)}
-async function excluirCategoria(){if(!estadoCategorias.excluir)return;const id=estadoCategorias.excluir;elementosCategorias.confirmarExcluir.disabled=true;elementosCategorias.confirmarExcluir.textContent="Excluindo...";try{await requisicaoApi(`/categorias/${id}`,{method:"DELETE"});fecharExclusaoCategoria();if(estadoCategorias.selecionada===id)estadoCategorias.selecionada=null;await carregarCategorias();mostrarToastCategoria("Categoria excluída com sucesso!")}catch(erro){fecharExclusaoCategoria();mostrarToastCategoria(erro.message,true)}finally{elementosCategorias.confirmarExcluir.disabled=false;elementosCategorias.confirmarExcluir.textContent="Excluir categoria"}}
-function abrirModalCategoria(modal){modal.classList.remove("escondido");modal.setAttribute("aria-hidden","false");document.body.classList.add("modal-aberto")}
-function fecharModalCategoria(modal){modal.classList.add("escondido");modal.setAttribute("aria-hidden","true");if(elementosCategorias.modal.classList.contains("escondido")&&elementosCategorias.modalExcluir.classList.contains("escondido"))document.body.classList.remove("modal-aberto")}
-function mostrarErroFormCategoria(mensagem){elementosCategorias.erroForm.textContent=mensagem;elementosCategorias.erroForm.classList.remove("escondido")}
-let temporizadorToastCategoria;function mostrarToastCategoria(mensagem,erro=false){clearTimeout(temporizadorToastCategoria);elementosCategorias.toast.querySelector("span").textContent=mensagem;elementosCategorias.toast.classList.toggle("erro-toast",erro);elementosCategorias.toast.classList.remove("escondido");temporizadorToastCategoria=setTimeout(()=>elementosCategorias.toast.classList.add("escondido"),3500)}
-function miniaturaCategoria(categoria,indice){return `<img src="../imagens/${imagemCategoria(categoria,indice)}" alt="">`}
-function imagemCategoria(categoria,indice=0){const texto=normalizarCategoria(categoria.nome);if(texto.includes("reche"))return"cookie-nutella.png";if(texto.includes("especial")||texto.includes("red"))return"cookie-red-velvet.png";if(texto.includes("chocolate"))return"cookie-chocolate.png";return["cookie-classico.png","cookie-chocolate.png","cookie-red-velvet.png"][indice%3]}
-function imagemProdutoCategoria(produto){const texto=normalizarCategoria(produto.nome);if(texto.includes("kinder"))return"cookie-kinder-bueno.png";if(texto.includes("nutella"))return"cookie-nutella.png";if(texto.includes("red velvet"))return"cookie-red-velvet.png";if(texto.includes("chocolate"))return"cookie-chocolate.png";return"cookie-classico.png"}
-function normalizarCategoria(texto){return String(texto||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase()}
-function formatarMoedaCategoria(valor){return Number(valor||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"})}
-function escaparCategoria(valor){const mapa={"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"};return String(valor||"").replace(/[&<>"']/g,c=>mapa[c])}
-function atualizarIconesCategorias(){if(window.lucide)window.lucide.createIcons()}
+const elementosCategorias = {
+  lista: document.getElementById("listaCategorias"),
+  detalhe: document.getElementById("detalheCategoria"),
+  busca: document.getElementById("buscaCategoria"),
+  erro: document.getElementById("erroCategorias"),
+  total: document.getElementById("totalCategorias"),
+  maisUsada: document.getElementById("categoriaMaisUsada"),
+  quantidadeMaisUsada: document.getElementById("quantidadeMaisUsada"),
+  totalProdutos: document.getElementById("totalProdutosCategorias"),
+  modal: document.getElementById("modalCategoria"),
+  tituloModal: document.getElementById("tituloModalCategoria"),
+  formulario: document.getElementById("formCategoria"),
+  id: document.getElementById("categoriaId"),
+  nome: document.getElementById("nomeCategoria"),
+  descricao: document.getElementById("descricaoCategoria"),
+  contador: document.getElementById("contadorCategoria"),
+  erroForm: document.getElementById("erroFormCategoria"),
+  salvar: document.getElementById("salvarCategoria"),
+  modalExcluir: document.getElementById("modalExcluirCategoria"),
+  textoExcluir: document.getElementById("textoExcluirCategoria"),
+  confirmarExcluir: document.getElementById("confirmarExclusaoCategoria"),
+  toast: document.getElementById("toastCategoria"),
+};
+const estadoCategorias = {
+  categorias: [],
+  produtos: [],
+  selecionada: null,
+  excluir: null,
+  busca: "",
+};
+document.addEventListener("DOMContentLoaded", iniciarCategorias);
+async function iniciarCategorias() {
+  configurarEventosCategorias();
+  atualizarIconesCategorias();
+  await carregarCategorias();
+}
+function configurarEventosCategorias() {
+  document
+    .getElementById("novaCategoria")
+    .addEventListener("click", () => abrirFormularioCategoria());
+  document
+    .getElementById("fecharModalCategoria")
+    .addEventListener("click", fecharFormularioCategoria);
+  document
+    .getElementById("cancelarCategoria")
+    .addEventListener("click", fecharFormularioCategoria);
+  document
+    .getElementById("cancelarExclusaoCategoria")
+    .addEventListener("click", fecharExclusaoCategoria);
+  elementosCategorias.formulario.addEventListener("submit", salvarCategoria);
+  elementosCategorias.confirmarExcluir.addEventListener(
+    "click",
+    excluirCategoria
+  );
+  elementosCategorias.descricao.addEventListener(
+    "input",
+    () =>
+      (elementosCategorias.contador.textContent =
+        elementosCategorias.descricao.value.length)
+  );
+  elementosCategorias.busca.addEventListener("input", () => {
+    estadoCategorias.busca = normalizarCategoria(
+      elementosCategorias.busca.value
+    );
+    renderizarCategorias();
+  });
+  [elementosCategorias.modal, elementosCategorias.modalExcluir].forEach(
+    (modal) =>
+      modal.addEventListener("click", (evento) => {
+        if (evento.target === modal)
+          modal === elementosCategorias.modal
+            ? fecharFormularioCategoria()
+            : fecharExclusaoCategoria();
+      })
+  );
+  document.addEventListener("keydown", (evento) => {
+    if (evento.key === "Escape") {
+      fecharFormularioCategoria();
+      fecharExclusaoCategoria();
+    }
+  });
+}
+async function carregarCategorias() {
+  elementosCategorias.erro.classList.add("escondido");
+  try {
+    const [categorias, produtos] = await Promise.all([
+      requisicaoApi("/categorias"),
+      requisicaoApi("/produtos"),
+    ]);
+    estadoCategorias.categorias = Array.isArray(categorias) ? categorias : [];
+    estadoCategorias.produtos = Array.isArray(produtos) ? produtos : [];
+    if (
+      !estadoCategorias.categorias.some(
+        (c) => c.id === estadoCategorias.selecionada
+      )
+    )
+      estadoCategorias.selecionada = estadoCategorias.categorias[0]?.id || null;
+    renderizarCategorias();
+  } catch (erro) {
+    console.error(erro.message);
+    elementosCategorias.erro.textContent =
+      "Não foi possível carregar as categorias. Tente novamente em instantes.";
+    elementosCategorias.erro.classList.remove("escondido");
+    estadoCategorias.categorias = [];
+    estadoCategorias.produtos = [];
+    renderizarCategorias();
+  }
+}
+function renderizarCategorias() {
+  const contagem = new Map(
+    estadoCategorias.categorias.map((c) => [
+      c.id,
+      estadoCategorias.produtos.filter((p) => p.categoriaId === c.id).length,
+    ])
+  );
+  const ordenadas = [...estadoCategorias.categorias].sort(
+    (a, b) => (contagem.get(b.id) || 0) - (contagem.get(a.id) || 0)
+  );
+  const maisUsada = ordenadas[0];
+  elementosCategorias.total.textContent = estadoCategorias.categorias.length;
+  elementosCategorias.totalProdutos.textContent =
+    estadoCategorias.produtos.length;
+  elementosCategorias.maisUsada.textContent = maisUsada?.nome || "—";
+  elementosCategorias.quantidadeMaisUsada.textContent = `${
+    maisUsada ? contagem.get(maisUsada.id) : 0
+  } produtos`;
+  const filtradas = estadoCategorias.categorias.filter(
+    (c) =>
+      normalizarCategoria(`${c.nome} ${c.descricao || ""}`).includes(
+        estadoCategorias.busca
+      ) ||
+      estadoCategorias.produtos.some(
+        (p) =>
+          p.categoriaId === c.id &&
+          normalizarCategoria(p.nome).includes(estadoCategorias.busca)
+      )
+  );
+  if (!filtradas.length) {
+    elementosCategorias.lista.innerHTML =
+      '<div class="estado-categorias">Nenhuma categoria encontrada.</div>';
+  } else {
+    elementosCategorias.lista.innerHTML = filtradas
+      .map((categoria, indice) =>
+        linhaCategoria(categoria, contagem.get(categoria.id) || 0, indice)
+      )
+      .join("");
+  }
+  configurarAcoesLista();
+  renderizarDetalhe(maisUsada?.id);
+  atualizarIconesCategorias();
+}
+function linhaCategoria(categoria, total, indice) {
+  return `<div class="linha-categoria${
+    categoria.id === estadoCategorias.selecionada ? " ativa" : ""
+  }" data-id="${
+    categoria.id
+  }" tabindex="0"><div class="categoria-identificacao"><span class="miniatura-categoria">${miniaturaCategoria(
+    categoria,
+    indice
+  )}</span><span class="categoria-texto"><strong>${escaparCategoria(
+    categoria.nome
+  )}</strong><small>${escaparCategoria(
+    categoria.descricao || "Categoria de cookies artesanais."
+  )}</small></span></div><span class="contagem-produtos"><strong>${total}</strong><small>produtos</small></span><span class="acoes-categoria"><button class="acao-categoria editar" type="button" data-id="${
+    categoria.id
+  }" aria-label="Editar ${escaparCategoria(
+    categoria.nome
+  )}"><i data-lucide="pencil"></i></button><button class="acao-categoria excluir" type="button" data-id="${
+    categoria.id
+  }" aria-label="Excluir ${escaparCategoria(
+    categoria.nome
+  )}"><i data-lucide="trash-2"></i></button></span></div>`;
+}
+function configurarAcoesLista() {
+  document.querySelectorAll(".linha-categoria").forEach((linha) => {
+    linha.addEventListener("click", (evento) => {
+      if (evento.target.closest("button")) return;
+      estadoCategorias.selecionada = Number(linha.dataset.id);
+      renderizarCategorias();
+    });
+    linha.addEventListener("keydown", (evento) => {
+      if (evento.key === "Enter") {
+        estadoCategorias.selecionada = Number(linha.dataset.id);
+        renderizarCategorias();
+      }
+    });
+  });
+  document
+    .querySelectorAll(".acao-categoria.editar")
+    .forEach((botao) =>
+      botao.addEventListener("click", () =>
+        abrirFormularioCategoria(Number(botao.dataset.id))
+      )
+    );
+  document
+    .querySelectorAll(".acao-categoria.excluir")
+    .forEach((botao) =>
+      botao.addEventListener("click", () =>
+        abrirExclusaoCategoria(Number(botao.dataset.id))
+      )
+    );
+}
+function renderizarDetalhe(idMaisUsada) {
+  const categoria = estadoCategorias.categorias.find(
+    (c) => c.id === estadoCategorias.selecionada
+  );
+  if (!categoria) {
+    elementosCategorias.detalhe.innerHTML =
+      '<div class="estado-categorias">Nenhuma categoria cadastrada.</div>';
+    return;
+  }
+  const produtos = estadoCategorias.produtos.filter(
+    (p) => p.categoriaId === categoria.id
+  );
+  const visiveis = produtos.slice(0, 5);
+  elementosCategorias.detalhe.innerHTML = `<section class="detalhe-topo"><div class="imagem-detalhe"><img src="../imagens/${imagemCategoria(
+    categoria
+  )}" alt=""></div><div class="info-detalhe"><div class="titulo-detalhe"><h2>${escaparCategoria(
+    categoria.nome
+  )}</h2>${
+    categoria.id === idMaisUsada
+      ? '<span class="mais-usada">☆ Categoria mais usada</span>'
+      : ""
+  }</div><p>${escaparCategoria(
+    categoria.descricao || "Categoria de cookies artesanais."
+  )}</p><small>${
+    produtos.length
+  } produtos cadastrados</small><button class="editar-detalhe" type="button" data-editar-detalhe="${
+    categoria.id
+  }"><i data-lucide="pencil"></i>Editar categoria</button></div></section><section class="produtos-categoria"><header><h3>Produtos nesta categoria</h3><a href="./produtos.html">Ver todos os produtos <i data-lucide="arrow-right"></i></a></header><div class="lista-produtos-categoria">${
+    visiveis.length
+      ? visiveis
+          .map(
+            (produto) =>
+              `<div class="produto-categoria"><span class="produto-nome"><img src="../imagens/${imagemProdutoCategoria(
+                produto
+              )}" alt=""><span>${escaparCategoria(
+                produto.nome
+              )}</span></span><span>${formatarMoedaCategoria(
+                produto.preco
+              )}</span><span class="status-produto${
+                produto.disponivel ? "" : " inativo"
+              }">${produto.disponivel ? "Ativo" : "Inativo"}</span></div>`
+          )
+          .join("")
+      : '<div class="estado-categorias">Nenhum produto nesta categoria.</div>'
+  }</div>${
+    produtos.length > 5
+      ? `<div class="mais-produtos">e mais ${
+          produtos.length - 5
+        } produtos...</div>`
+      : ""
+  }</section>`;
+  elementosCategorias.detalhe
+    .querySelector("[data-editar-detalhe]")
+    .addEventListener("click", () => abrirFormularioCategoria(categoria.id));
+  atualizarIconesCategorias();
+}
+function abrirFormularioCategoria(id) {
+  const categoria = estadoCategorias.categorias.find((c) => c.id === id);
+  elementosCategorias.formulario.reset();
+  elementosCategorias.id.value = categoria?.id || "";
+  elementosCategorias.nome.value = categoria?.nome || "";
+  elementosCategorias.descricao.value = categoria?.descricao || "";
+  elementosCategorias.contador.textContent =
+    elementosCategorias.descricao.value.length;
+  elementosCategorias.tituloModal.textContent = categoria
+    ? "Editar categoria"
+    : "Nova categoria";
+  elementosCategorias.erroForm.classList.add("escondido");
+  abrirModalCategoria(elementosCategorias.modal);
+  setTimeout(() => elementosCategorias.nome.focus(), 50);
+}
+function fecharFormularioCategoria() {
+  fecharModalCategoria(elementosCategorias.modal);
+}
+async function salvarCategoria(evento) {
+  evento.preventDefault();
+  const id = Number(elementosCategorias.id.value);
+  const dados = {
+    nome: elementosCategorias.nome.value.trim(),
+    descricao: elementosCategorias.descricao.value.trim() || null,
+  };
+  if (!dados.nome) {
+    mostrarErroFormCategoria("Informe o nome da categoria.");
+    return;
+  }
+  elementosCategorias.salvar.disabled = true;
+  elementosCategorias.salvar.textContent = "Salvando...";
+  try {
+    const salva = await requisicaoApi(
+      id ? `/categorias/${id}` : "/categorias",
+      { method: id ? "PUT" : "POST", body: JSON.stringify(dados) }
+    );
+    fecharFormularioCategoria();
+    estadoCategorias.selecionada = salva.id;
+    await carregarCategorias();
+    mostrarToastCategoria(
+      id ? "Categoria atualizada com sucesso!" : "Categoria criada com sucesso!"
+    );
+  } catch (erro) {
+    mostrarErroFormCategoria(erro.message);
+  } finally {
+    elementosCategorias.salvar.disabled = false;
+    elementosCategorias.salvar.textContent = "Salvar categoria";
+  }
+}
+function abrirExclusaoCategoria(id) {
+  const categoria = estadoCategorias.categorias.find((c) => c.id === id);
+  if (!categoria) return;
+  estadoCategorias.excluir = id;
+  elementosCategorias.textoExcluir.textContent = `Deseja excluir “${categoria.nome}”? A categoria precisa estar sem produtos.`;
+  abrirModalCategoria(elementosCategorias.modalExcluir);
+}
+function fecharExclusaoCategoria() {
+  estadoCategorias.excluir = null;
+  fecharModalCategoria(elementosCategorias.modalExcluir);
+}
+async function excluirCategoria() {
+  if (!estadoCategorias.excluir) return;
+  const id = estadoCategorias.excluir;
+  elementosCategorias.confirmarExcluir.disabled = true;
+  elementosCategorias.confirmarExcluir.textContent = "Excluindo...";
+  try {
+    await requisicaoApi(`/categorias/${id}`, { method: "DELETE" });
+    fecharExclusaoCategoria();
+    if (estadoCategorias.selecionada === id)
+      estadoCategorias.selecionada = null;
+    await carregarCategorias();
+    mostrarToastCategoria("Categoria excluída com sucesso!");
+  } catch (erro) {
+    fecharExclusaoCategoria();
+    mostrarToastCategoria(erro.message, true);
+  } finally {
+    elementosCategorias.confirmarExcluir.disabled = false;
+    elementosCategorias.confirmarExcluir.textContent = "Excluir categoria";
+  }
+}
+function abrirModalCategoria(modal) {
+  modal.classList.remove("escondido");
+  modal.setAttribute("aria-hidden", "false");
+  document.body.classList.add("modal-aberto");
+}
+function fecharModalCategoria(modal) {
+  modal.classList.add("escondido");
+  modal.setAttribute("aria-hidden", "true");
+  if (
+    elementosCategorias.modal.classList.contains("escondido") &&
+    elementosCategorias.modalExcluir.classList.contains("escondido")
+  )
+    document.body.classList.remove("modal-aberto");
+}
+function mostrarErroFormCategoria(mensagem) {
+  elementosCategorias.erroForm.textContent = mensagem;
+  elementosCategorias.erroForm.classList.remove("escondido");
+}
+let temporizadorToastCategoria;
+function mostrarToastCategoria(mensagem, erro = false) {
+  clearTimeout(temporizadorToastCategoria);
+  elementosCategorias.toast.querySelector("span").textContent = mensagem;
+  elementosCategorias.toast.classList.toggle("erro-toast", erro);
+  elementosCategorias.toast.classList.remove("escondido");
+  temporizadorToastCategoria = setTimeout(
+    () => elementosCategorias.toast.classList.add("escondido"),
+    3500
+  );
+}
+function miniaturaCategoria(categoria, indice) {
+  return `<img src="../imagens/${imagemCategoria(categoria, indice)}" alt="">`;
+}
+function imagemCategoria(categoria, indice = 0) {
+  const texto = normalizarCategoria(categoria.nome);
+  if (texto.includes("reche")) return "cookie-nutella.png";
+  if (texto.includes("especial") || texto.includes("red"))
+    return "cookie-red-velvet.png";
+  if (texto.includes("chocolate")) return "cookie-chocolate.png";
+  return [
+    "cookie-classico.png",
+    "cookie-chocolate.png",
+    "cookie-red-velvet.png",
+  ][indice % 3];
+}
+function imagemProdutoCategoria(produto) {
+  const texto = normalizarCategoria(produto.nome);
+  if (texto.includes("kinder")) return "cookie-kinder-bueno.png";
+  if (texto.includes("nutella")) return "cookie-nutella.png";
+  if (texto.includes("red velvet")) return "cookie-red-velvet.png";
+  if (texto.includes("chocolate")) return "cookie-chocolate.png";
+  return "cookie-classico.png";
+}
+function normalizarCategoria(texto) {
+  return String(texto || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+}
+function formatarMoedaCategoria(valor) {
+  return Number(valor || 0).toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  });
+}
+function escaparCategoria(valor) {
+  const mapa = {
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#039;",
+  };
+  return String(valor || "").replace(/[&<>"']/g, (c) => mapa[c]);
+}
+function atualizarIconesCategorias() {
+  if (window.lucide) window.lucide.createIcons();
+}

@@ -219,7 +219,7 @@ function criarLinha(produto) {
   const disponivel = Boolean(produto.disponivel);
   linha.innerHTML = `
     <td><div class="produto-celula">
-      <img class="produto-imagem" src="../imagens/${escolherImagem(produto)}" alt="" loading="lazy">
+      <img class="produto-imagem" src="../imagens/${escolherImagem(produto)}?v=2" alt="" loading="lazy">
       <div class="produto-texto">
         <strong>${escapar(produto.nome || "Produto sem nome")}</strong>
         <small>${escapar(produto.descricao || "Sem descrição cadastrada.")}</small>
