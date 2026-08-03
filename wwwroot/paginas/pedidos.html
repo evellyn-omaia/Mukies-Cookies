@@ -10,7 +10,7 @@
   <!-- Biblioteca que desenha os ícones data-lucide -->
   <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js" defer></script>
   <link rel="stylesheet" href="../estilos/global.css">
-  <link rel="stylesheet" href="../estilos/pedidos.css">
+  <link rel="stylesheet" href="../estilos/pedidos.css?v=3">
 </head>
 <body>
   <div class="aplicacao">
@@ -27,7 +27,6 @@
         <a class="ativo" href="./pedidos.html" aria-current="page"><i data-lucide="notebook-tabs"></i><span>Pedidos</span></a>
         <a href="#"><i data-lucide="layout-grid"></i><span>Categorias</span></a>
         <a href="#"><i data-lucide="chart-no-axes-column-increasing"></i><span>Relatórios</span></a>
-        <a href="#"><i data-lucide="users"></i><span>Clientes</span></a>
         <a href="#"><i data-lucide="settings"></i><span>Configurações</span></a>
       </nav>
 
@@ -141,6 +140,10 @@
     </section>
   </div>
 
+  <div class="menu-acoes-pedido" id="menuAcoesPedido" hidden>
+    <button type="button" id="editarPedidoAcao"><i data-lucide="pencil"></i>Editar pedido</button>
+  </div>
+
   <div class="modal modal-pedido escondido" id="modalPedido" role="dialog" aria-modal="true" aria-labelledby="tituloModalPedido">
     <div class="modal-caixa">
       <button class="fechar-modal" id="fecharPedido" type="button" aria-label="Fechar"><i data-lucide="x"></i></button>
@@ -153,6 +156,7 @@
         <div class="linha-formulario dados-cliente-form">
           <label>Nome do cliente<input id="nomeCliente" maxlength="100" placeholder="Ex.: Maria Oliveira" autocomplete="name" required></label>
           <label>Telefone<input id="telefoneCliente" type="tel" maxlength="20" placeholder="(00) 00000-0000" autocomplete="tel"></label>
+          <label>Data do pedido<input id="dataPedido" type="datetime-local" required></label>
         </div>
         <label>Observação<textarea id="observacaoPedido" maxlength="500" rows="3" placeholder="Detalhes da entrega, preferências ou recados..."></textarea></label>
 
@@ -175,6 +179,6 @@
   </div>
 
   <script src="../scripts/api.js"></script>
-  <script src="../scripts/pedidos.js"></script>
+  <script src="../scripts/pedidos.js?v=3"></script>
 </body>
 </html>
