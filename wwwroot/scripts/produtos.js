@@ -38,7 +38,7 @@ const imagens = [
   "cookie-nutella.png",
   "cookie-red-velvet.png",
   "cookie-chocolate.png",
-  "cookie-doce-leite.png",
+  "cookie-kinder-bueno.png",
 ];
 
 let produtos = [];
@@ -451,9 +451,9 @@ function escolherImagem(produto) {
   const texto = semAcentos(
     (produto.nome || "") + " " + (produto.nomeCategoria || ""),
   );
+  if (texto.includes("kinder")) return "cookie-kinder-bueno.png";
   if (texto.includes("nutella")) return "cookie-nutella.png";
   if (texto.includes("red velvet")) return "cookie-red-velvet.png";
-  if (texto.includes("doce de leite")) return "cookie-doce-leite.png";
   if (texto.includes("chocolate") || texto.includes("belga")) {
     return "cookie-chocolate.png";
   }

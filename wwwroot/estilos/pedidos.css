@@ -673,7 +673,6 @@ body.modal-aberto { overflow: hidden; }
 }
 
 @media (max-width: 1000px) {
-  .barra-lateral { overflow-y: auto; }
   .resumos-pedidos { grid-template-columns: repeat(2, 1fr); }
   .resumo-faturamento { grid-column: auto; }
   .controles-pedidos { grid-template-columns: 1fr 1fr; }

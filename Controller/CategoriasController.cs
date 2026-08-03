@@ -89,4 +89,61 @@ public class CategoriasController : ControllerBase
             resposta
         );
     }
+
+    [HttpPut("{id}")]
+    public async Task<ActionResult> Atualizar(
+        int id,
+        CategoriaEntradaDto dados)
+    {
+        var categoria = await _contexto.Categorias
+            .FirstOrDefaultAsync(categoria => categoria.Id == id);
+
+        if (categoria == null)
+        {
+            return NotFound("Categoria não encontrada.");
+        }
+
+        var nomeJaExiste = await _contexto.Categorias
+            .AnyAsync(outra => outra.Id != id && outra.Nome == dados.Nome);
+
+        if (nomeJaExiste)
+        {
+            return BadRequest("Já existe uma categoria com esse nome.");
+        }
+
+        categoria.Nome = dados.Nome;
+        categoria.Descricao = dados.Descricao;
+        await _contexto.SaveChangesAsync();
+
+        return Ok(new CategoriaRespostaDto
+        {
+            Id = categoria.Id,
+            Nome = categoria.Nome,
+            Descricao = categoria.Descricao
+        });
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<ActionResult> Excluir(int id)
+    {
+        var categoria = await _contexto.Categorias
+            .Include(categoria => categoria.Produtos)
+            .FirstOrDefaultAsync(categoria => categoria.Id == id);
+
+        if (categoria == null)
+        {
+            return NotFound("Categoria não encontrada.");
+        }
+
+        if (categoria.Produtos.Count > 0)
+        {
+            return BadRequest(
+                "Não é possível excluir uma categoria que possui produtos."
+            );
+        }
+
+        _contexto.Categorias.Remove(categoria);
+        await _contexto.SaveChangesAsync();
+        return NoContent();
+    }
 }

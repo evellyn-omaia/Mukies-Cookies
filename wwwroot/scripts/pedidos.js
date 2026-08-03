@@ -729,9 +729,9 @@ function formatarDataPedido(valor, completa) {
 
 function escolherImagemProduto(nome, id) {
   const texto = textoParaBusca(nome);
+  if (texto.includes("kinder")) return "cookie-kinder-bueno.png";
   if (texto.includes("nutella")) return "cookie-nutella.png";
   if (texto.includes("red velvet")) return "cookie-red-velvet.png";
-  if (texto.includes("doce de leite")) return "cookie-doce-leite.png";
   if (texto.includes("chocolate")) return "cookie-chocolate.png";
 
   const imagens = [
@@ -739,7 +739,7 @@ function escolherImagemProduto(nome, id) {
     "cookie-nutella.png",
     "cookie-red-velvet.png",
     "cookie-chocolate.png",
-    "cookie-doce-leite.png",
+    "cookie-kinder-bueno.png",
   ];
   return imagens[(id - 1) % imagens.length];
 }

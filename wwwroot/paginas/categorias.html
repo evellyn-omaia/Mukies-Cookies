@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Organize as categorias de produtos da Mukies Cookies">
+  <title>Categorias | Mukies Cookies</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&amp;family=Playfair+Display:wght@600;700&amp;display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js" defer></script>
+  <link rel="stylesheet" href="../estilos/global.css">
+  <link rel="stylesheet" href="../estilos/categorias.css">
+</head>
+<body class="pagina-categorias">
+  <div class="aplicacao">
+    <aside class="barra-lateral">
+      <a class="logo" href="../index.html" aria-label="Mukies Cookies — início"><img class="logo-cookie-imagem" src="../imagens/cookie-classico.png" alt=""><strong class="logo-nome">Mukies Cookies</strong><span class="logo-detalhe">♡</span></a>
+      <nav class="menu" aria-label="Menu principal">
+        <a href="../index.html"><i data-lucide="house"></i><span>Início</span></a>
+        <a href="./produtos.html"><i data-lucide="shopping-bag"></i><span>Produtos</span></a>
+        <a href="./pedidos.html"><i data-lucide="notebook-tabs"></i><span>Pedidos</span></a>
+        <a class="ativo" href="./categorias.html" aria-current="page"><i data-lucide="layout-grid"></i><span>Categorias</span></a>
+        <a href="#"><i data-lucide="chart-no-axes-column-increasing"></i><span>Relatórios</span></a>
+        <a href="#"><i data-lucide="settings"></i><span>Configurações</span></a>
+      </nav>
+      <div class="decoracao-lateral" aria-hidden="true"><img src="../imagens/ilustracao-cookie.png" alt=""><div class="bilhete">Feito com amor<br>em cada cookie! <span>♡</span></div></div>
+    </aside>
+
+    <section class="area-conteudo">
+      <header class="barra-superior">
+        <label class="busca-global" for="buscaCategoria"><i data-lucide="search"></i><input id="buscaCategoria" type="search" placeholder="Buscar categorias ou produtos..." autocomplete="off"></label>
+        <button class="notificacao" type="button" aria-label="Notificações"><i data-lucide="bell"></i><span></span></button>
+      </header>
+
+      <main class="pagina categorias-conteudo">
+        <section class="topo-categorias">
+          <div class="apresentacao-categorias"><div class="titulo-com-coracao"><h1>Categorias</h1><span>♡</span></div><p>Organize os produtos por tipo</p><button class="botao-destaque" id="novaCategoria" type="button"><i data-lucide="plus"></i>Nova categoria</button></div>
+          <div class="resumos-categorias">
+            <article><span class="icone-resumo categoria"><i data-lucide="layout-grid"></i></span><div><small>Total de categorias</small><strong id="totalCategorias">—</strong><em>Ativas</em></div></article>
+            <article><span class="icone-resumo favorita">♡</span><div><small>Mais usada</small><strong class="texto-resumo" id="categoriaMaisUsada">—</strong><em id="quantidadeMaisUsada">— produtos</em></div></article>
+            <article><span class="icone-resumo cookie">🍪</span><div><small>Total de produtos<br>nas categorias</small><strong id="totalProdutosCategorias">—</strong></div></article>
+          </div>
+        </section>
+
+        <div id="erroCategorias" class="aviso erro escondido" role="alert"></div>
+        <section class="grade-categorias">
+          <article class="painel-categorias lista-categorias">
+            <header><h2>Todas as categorias</h2></header>
+            <div class="cabecalho-lista"><span>Categoria</span><span>Produtos</span><span>Ações</span></div>
+            <div id="listaCategorias" class="corpo-categorias"><div class="estado-categorias">Carregando categorias...</div></div>
+            <footer>♡ Dica: categorias bem organizadas facilitam a navegação dos seus clientes! ♡</footer>
+          </article>
+
+          <article class="painel-categorias detalhe-categoria" id="detalheCategoria">
+            <div class="estado-categorias">Selecione uma categoria para visualizar os detalhes.</div>
+          </article>
+        </section>
+
+        <aside class="mensagem-organizacao"><span>♡</span><div><strong>Organização é o ingrediente secreto do sucesso!</strong><p>Mantenha suas categorias sempre atualizadas para uma loja ainda mais encantadora.</p></div><img src="../imagens/cookie-classico.png" alt="" aria-hidden="true"></aside>
+      </main>
+    </section>
+  </div>
+
+  <div class="modal escondido" id="modalCategoria" role="dialog" aria-modal="true" aria-labelledby="tituloModalCategoria" aria-hidden="true">
+    <div class="modal-caixa" tabindex="-1"><button class="fechar-modal" id="fecharModalCategoria" type="button" aria-label="Fechar"><i data-lucide="x"></i></button><div class="modal-titulo"><span>♡</span><div><h2 id="tituloModalCategoria">Nova categoria</h2><p>Crie uma forma especial de organizar seus cookies.</p></div></div><form id="formCategoria"><input id="categoriaId" type="hidden"><label>Nome da categoria<input id="nomeCategoria" maxlength="100" autocomplete="off" required></label><label>Descrição<textarea id="descricaoCategoria" maxlength="300" rows="4" placeholder="Descreva os produtos desta categoria"></textarea><small class="contador-categoria"><span id="contadorCategoria">0</span>/300</small></label><div id="erroFormCategoria" class="aviso erro escondido" role="alert"></div><div class="acoes-modal"><button class="botao-secundario" id="cancelarCategoria" type="button">Cancelar</button><button class="botao-destaque" id="salvarCategoria" type="submit">Salvar categoria</button></div></form></div>
+  </div>
+
+  <div class="modal escondido" id="modalExcluirCategoria" role="alertdialog" aria-modal="true" aria-labelledby="tituloExcluirCategoria" aria-hidden="true"><div class="modal-caixa excluir-categoria-caixa" tabindex="-1"><span class="icone-excluir"><i data-lucide="trash-2"></i></span><h2 id="tituloExcluirCategoria">Excluir categoria?</h2><p id="textoExcluirCategoria">Esta ação não poderá ser desfeita.</p><div class="acoes-modal"><button class="botao-secundario" id="cancelarExclusaoCategoria" type="button">Cancelar</button><button class="botao-perigo-categoria" id="confirmarExclusaoCategoria" type="button">Excluir categoria</button></div></div></div>
+  <div class="toast escondido" id="toastCategoria" role="status" aria-live="polite"><i data-lucide="circle-check"></i><span></span></div>
+  <script src="../scripts/api.js"></script><script src="../scripts/categorias.js"></script>
+</body>
+</html>
