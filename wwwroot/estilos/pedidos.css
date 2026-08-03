@@ -251,6 +251,7 @@
 .badge-status.cancelado { background: #ffe7e9; color: #c94c5c; }
 
 .acoes-pedido {
+  position: relative;
   display: flex;
   justify-content: center;
   gap: 5px;
@@ -267,6 +268,32 @@
 }
 .acao-pedido:hover { background: #ffe8e5; color: #e75466; }
 .acao-pedido svg { width: 18px; }
+.menu-acoes-pedido {
+  position: fixed;
+  z-index: 1000;
+  width: 155px;
+  padding: 5px;
+  border: 1px solid #eadbd0;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 10px 25px rgba(83, 48, 34, .16);
+}
+.menu-acoes-pedido[hidden] { display: none; }
+.menu-acoes-pedido button {
+  width: 100%;
+  padding: 9px 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: #56362a;
+  font-size: 13px;
+  text-align: left;
+}
+.menu-acoes-pedido button:hover { background: #fff0ee; color: #e75466; }
+.menu-acoes-pedido svg { width: 16px; }
 
 .sem-pedidos td {
   padding: 42px 18px !important;
@@ -577,7 +604,7 @@ body.modal-aberto { overflow: hidden; }
 }
 .icone-modal-pedido svg { width: 25px; }
 .modal-pedido .modal-titulo h2 { font-size: 27px; }
-.dados-cliente-form { grid-template-columns: 1.35fr .85fr; }
+.dados-cliente-form { grid-template-columns: 1.15fr .8fr .9fr; }
 
 .bloco-itens-form {
   padding: 16px;

@@ -118,6 +118,11 @@ public class PedidosController : ControllerBase
     public async Task<ActionResult> Cadastrar(
         PedidoEntradaDto dados)
     {
+        if (dados.DataPedido.HasValue && dados.DataPedido.Value > DateTime.Now.AddMinutes(1))
+        {
+            return BadRequest("A data do pedido não pode estar no futuro.");
+        }
+
         var produtosRepetidos = dados.Itens
             .GroupBy(item => item.ProdutoId)
             .Any(grupo => grupo.Count() > 1);
@@ -130,16 +135,17 @@ public class PedidosController : ControllerBase
         }
 
         var produtosIds = dados.Itens
-            .Select(item => item.ProdutoId)
-            .ToList();
+    .Select(item => item.ProdutoId)
+    .ToList();
 
-        var produtos = await _contexto.Produtos
+        var todosProdutosDisponiveis = await _contexto.Produtos
             .AsNoTracking()
-            .Where(produto =>
-                produtosIds.Contains(produto.Id) &&
-                produto.Disponivel
-            )
+            .Where(produto => produto.Disponivel)
             .ToListAsync();
+
+        var produtos = todosProdutosDisponiveis
+            .Where(produto => produtosIds.Contains(produto.Id))
+            .ToList();
 
         if (produtos.Count != produtosIds.Count)
         {
@@ -152,7 +158,7 @@ public class PedidosController : ControllerBase
         {
             NomeCliente = dados.NomeCliente,
             TelefoneCliente = dados.TelefoneCliente,
-            DataPedido = DateTime.Now,
+            DataPedido = dados.DataPedido ?? DateTime.Now,
             Observacao = dados.Observacao,
             Status = StatusPedido.AguardandoPagamento
         };
@@ -240,6 +246,83 @@ public class PedidosController : ControllerBase
 
         await _contexto.SaveChangesAsync();
 
+        return NoContent();
+    }
+
+    [HttpPut("{id}")]
+    public async Task<ActionResult> Editar(int id, PedidoEntradaDto dados)
+    {
+        var pedido = await _contexto.Pedidos
+            .Include(pedido => pedido.ItensPedido)
+            .FirstOrDefaultAsync(pedido => pedido.Id == id);
+
+        if (pedido == null) return NotFound("Pedido não encontrado.");
+
+        if (dados.DataPedido.HasValue && dados.DataPedido.Value > DateTime.Now.AddMinutes(1))
+            return BadRequest("A data do pedido não pode estar no futuro.");
+
+        var produtosRepetidos = dados.Itens
+            .GroupBy(item => item.ProdutoId)
+            .Any(grupo => grupo.Count() > 1);
+        if (produtosRepetidos)
+            return BadRequest("O mesmo produto não pode aparecer duas vezes no pedido.");
+
+        var produtosIds = dados.Itens.Select(item => item.ProdutoId).ToList();
+        var todosProdutos = await _contexto.Produtos.ToListAsync();
+        var produtos = todosProdutos
+            .Where(produto => produtosIds.Contains(produto.Id))
+            .ToList();
+        if (produtos.Count != produtosIds.Count)
+            return BadRequest("Um ou mais produtos não existem.");
+
+        var produtosExistentesIds = pedido.ItensPedido
+            .Select(item => item.ProdutoId)
+            .ToHashSet();
+        var adicionouProdutoIndisponivel = produtos.Any(produto =>
+            !produto.Disponivel && !produtosExistentesIds.Contains(produto.Id));
+        if (adicionouProdutoIndisponivel)
+            return BadRequest("Não é possível adicionar um produto indisponível ao pedido.");
+
+        pedido.NomeCliente = dados.NomeCliente;
+        pedido.TelefoneCliente = dados.TelefoneCliente;
+        pedido.Observacao = dados.Observacao;
+        if (dados.DataPedido.HasValue) pedido.DataPedido = dados.DataPedido.Value;
+
+        var idsRecebidos = dados.Itens.Select(item => item.ProdutoId).ToHashSet();
+        var itensRemovidos = pedido.ItensPedido
+            .Where(item => !idsRecebidos.Contains(item.ProdutoId))
+            .ToList();
+        _contexto.ItensPedido.RemoveRange(itensRemovidos);
+
+        foreach (var itemRecebido in dados.Itens)
+        {
+            var produto = produtos.First(produto => produto.Id == itemRecebido.ProdutoId);
+            var itemExistente = pedido.ItensPedido
+                .FirstOrDefault(item => item.ProdutoId == itemRecebido.ProdutoId);
+
+            if (itemExistente != null)
+            {
+                itemExistente.Quantidade = itemRecebido.Quantidade;
+                itemExistente.PrecoUnitario = produto.Preco;
+            }
+            else
+            {
+                pedido.ItensPedido.Add(new ItemPedido
+                {
+                    ProdutoId = produto.Id,
+                    Quantidade = itemRecebido.Quantidade,
+                    PrecoUnitario = produto.Preco
+                });
+            }
+        }
+
+        pedido.ValorTotal = dados.Itens.Sum(item =>
+        {
+            var produto = produtos.First(produto => produto.Id == item.ProdutoId);
+            return item.Quantidade * produto.Preco;
+        });
+
+        await _contexto.SaveChangesAsync();
         return NoContent();
     }
 
