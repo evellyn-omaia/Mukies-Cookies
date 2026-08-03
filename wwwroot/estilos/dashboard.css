@@ -1,0 +1,38 @@
+.pagina-dashboard .pagina { max-width: 1280px; padding-top: 30px; }
+.acoes-superiores, .perfil, .boas-vindas, .cabecalho-painel, .card-resumo, .card-resumo > span:last-child { display: flex; align-items: center; }
+.acoes-superiores { gap: 18px; }
+.perfil { gap: 11px; padding-left: 15px; border-left: 1px solid #eadfd8; }
+.perfil-avatar { display: grid; width: 45px; height: 45px; place-items: center; border: 3px solid #f2ded3; border-radius: 50%; background: #7c4934; color: #fff; font-weight: 700; }
+.perfil strong, .perfil small { display: block; }
+.perfil strong { font-size: 14px; }
+.perfil small { margin-top: 3px; color: var(--texto-suave); }
+.perfil > svg { width: 17px; }
+.boas-vindas { min-height: 112px; justify-content: space-between; margin-bottom: 18px; }
+.boas-vindas h1 { font-size: 39px; }
+.boas-vindas p { margin: 9px 0 0; color: #8c604c; font-size: 16px; }
+.cookies-destaque { position: relative; width: 250px; height: 105px; margin-right: 20px; }
+.cookies-destaque::after { content: "♡"; position: absolute; right: -2px; top: 0; color: var(--rosa); font-size: 30px; transform: rotate(18deg); }
+.cookies-destaque img { position: absolute; bottom: 0; width: 100px; height: 100px; object-fit: contain; filter: drop-shadow(0 9px 7px rgba(81,48,30,.15)); }
+.cookies-destaque img:nth-child(1) { left: 10px; transform: rotate(-9deg); }
+.cookies-destaque img:nth-child(2) { left: 76px; z-index: 2; }
+.cookies-destaque img:nth-child(3) { left: 142px; transform: rotate(9deg); }
+.cards-resumo { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 16px; margin-bottom: 22px; }
+.card-resumo { min-width: 0; min-height: 145px; gap: 17px; padding: 20px 16px; border: 1px solid var(--borda); border-radius: 16px; background: #fff; box-shadow: var(--sombra); color: var(--marrom); text-decoration: none; }
+.card-resumo:hover { transform: translateY(-2px); box-shadow: 0 11px 28px rgba(104,65,41,.12); }
+.icone-card { display: grid; width: 62px; height: 62px; flex: 0 0 auto; place-items: center; border-radius: 50%; }
+.icone-card svg { width: 31px; height: 31px; stroke-width: 1.6; }
+.icone-card.emoji { font-size: 31px; }
+.card-rosa .icone-card { background: #ffe0e2; color: #e85d6f; }.card-laranja .icone-card { background: #ffe6d0; color: #c56b2b; }.card-verde .icone-card { background: #e2eee0; color: #5b8d64; }.card-marrom .icone-card { background: #eadfd6; color: #885431; }
+.card-resumo > span:last-child { min-width: 0; flex: 1; align-items: flex-start; flex-direction: column; }
+.card-resumo strong { font: 700 31px/1 "Playfair Display",serif; white-space: nowrap; }.card-resumo .valor-card { font-size: 23px; }
+.card-resumo small { margin: 8px 0 19px; color: #654638; white-space: nowrap; }.card-resumo em { display: flex; align-items: center; gap: 8px; color: var(--rosa); font-size: 13px; font-style: normal; }.card-resumo em svg { width: 15px; }.card-laranja em { color:#c56b2b }.card-verde em { color:#5b8d64 }.card-marrom em { color:#885431 }
+.grade-dashboard { display: grid; grid-template-columns: 1.08fr 1fr; gap: 18px; margin-bottom: 22px; }
+.painel { overflow: hidden; border: 1px solid var(--borda); border-radius: 16px; background: #fff; box-shadow: var(--sombra); }
+.cabecalho-painel { min-height: 61px; justify-content: space-between; gap: 15px; padding: 14px 20px; border-bottom: 1px solid #eee1d8; }
+.cabecalho-painel h2 { display: flex; align-items: center; gap: 10px; margin: 0; font: 600 18px "Playfair Display",serif; }.cabecalho-painel h2 svg { width: 21px; color: #b66939; }.cabecalho-painel a { display:flex; align-items:center; gap:8px; color:var(--marrom); font-size:12px; text-decoration:none }.cabecalho-painel a svg { width:14px }
+.tabela-dashboard { overflow-x: auto; }.tabela-dashboard table { width:100%; min-width:540px; border-collapse:collapse }.tabela-dashboard th,.tabela-dashboard td { height:43px; padding:9px 18px; border-bottom:1px solid #f0e5de; font-size:12px; text-align:left }.tabela-dashboard th { color:#765b50; font-weight:600 }.tabela-dashboard td { color:#51382f }.ultimos-pedidos footer { padding:11px 15px; background:#fff5f4; color:#805f53; font-size:11px; text-align:center }
+.etiqueta-status { display:inline-flex; padding:5px 10px; border-radius:14px; font-size:11px; white-space:nowrap }.status-pendente { background:#fff0d8;color:#c36c25 }.status-producao {background:#eee5fa;color:#7254a3}.status-pronto {background:#e1f2e9;color:#39775b}.status-outro {background:#f1ece9;color:#765d52}
+.painel-vendas .cabecalho-painel p { margin:6px 0 0;color:#8d7468;font-size:14px }.painel-vendas .cabecalho-painel p strong {color:var(--rosa)}.periodo {display:flex;align-items:center;gap:5px;padding:7px 10px;border:1px solid var(--borda);border-radius:8px;font-size:11px}.periodo svg{width:14px}.grafico{height:258px;padding:12px 15px 6px}.grafico svg{width:100%;height:100%;overflow:visible}.linha-grade{stroke:#eadfd8;stroke-dasharray:4 5}.area-grafico{fill:url(#gradienteVendas)}.linha-grafico{fill:none;stroke:#f06d79;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}.ponto-grafico{fill:#fff;stroke:#f06d79;stroke-width:3}.rotulo-grafico{fill:#7e6960;font:11px "DM Sans",sans-serif}.estado-dashboard{grid-column:1/-1;padding:35px;color:#91776b;text-align:center}
+.produtos-vendidos .cabecalho-painel { border-bottom:0 }.grade-produtos{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;padding:0 14px 14px}.produto-ranking{display:grid;grid-template-columns:112px 1fr;gap:14px;min-width:0;padding:10px;border:1px solid #eee0d7;border-radius:14px}.produto-ranking img{width:112px;height:112px;object-fit:cover;border-radius:13px;background:#fff0e9}.produto-ranking h3{margin:5px 0 7px;font-size:14px}.produto-ranking p{display:-webkit-box;margin:0 0 8px;overflow:hidden;color:#786259;font-size:12px;line-height:1.4;-webkit-line-clamp:2;-webkit-box-orient:vertical}.produto-ranking strong{display:block;color:var(--rosa);font-size:17px}.produto-ranking small{display:inline-flex;margin-top:8px;padding:5px 10px;border-radius:14px;background:#fff0f1;color:#855e53}
+@media(max-width:1200px){.cards-resumo{grid-template-columns:repeat(2,1fr)}.grade-dashboard{grid-template-columns:1fr}.grade-produtos{grid-template-columns:1fr 1fr}.cookies-destaque{display:none}}
+@media(max-width:700px){.perfil{display:none}.pagina-dashboard .pagina{padding:20px 14px}.boas-vindas h1{font-size:33px}.cards-resumo,.grade-produtos{grid-template-columns:1fr}.card-resumo{min-height:120px}.grade-produtos{padding:10px}.cabecalho-painel{align-items:flex-start}.produto-ranking{grid-template-columns:90px 1fr}.produto-ranking img{width:90px;height:90px}}

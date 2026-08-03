@@ -1,5 +1,96 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mukies Cookies</title></head>
-<body><script>location.replace('./paginas/produtos.html');</script></body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Painel administrativo da Mukies Cookies">
+  <title>Início | Mukies Cookies</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&amp;family=Playfair+Display:wght@600;700&amp;display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js" defer></script>
+  <link rel="stylesheet" href="./estilos/global.css">
+  <link rel="stylesheet" href="./estilos/dashboard.css">
+</head>
+<body class="pagina-dashboard">
+  <div class="aplicacao">
+    <aside class="barra-lateral">
+      <a class="logo" href="./index.html" aria-label="Mukies Cookies — início">
+        <img class="logo-cookie-imagem" src="./imagens/cookie-classico.png" alt="">
+        <strong class="logo-nome">Mukies Cookies</strong>
+        <span class="logo-detalhe" aria-hidden="true">♡</span>
+      </a>
+
+      <nav class="menu" aria-label="Menu principal">
+        <a class="ativo" href="./index.html" aria-current="page"><i data-lucide="house"></i><span>Início</span></a>
+        <a href="./paginas/produtos.html"><i data-lucide="shopping-bag"></i><span>Produtos</span></a>
+        <a href="./paginas/pedidos.html"><i data-lucide="notebook-tabs"></i><span>Pedidos</span></a>
+        <a href="#categorias"><i data-lucide="layout-grid"></i><span>Categorias</span></a>
+        <a href="#relatorios"><i data-lucide="chart-no-axes-column-increasing"></i><span>Relatórios</span></a>
+        <a href="#configuracoes"><i data-lucide="settings"></i><span>Configurações</span></a>
+      </nav>
+
+      <div class="decoracao-lateral" aria-hidden="true">
+        <img src="./imagens/ilustracao-cookie.png" alt="">
+        <div class="bilhete">Feito com amor<br>em cada cookie! <span>♡</span></div>
+      </div>
+    </aside>
+
+    <section class="area-conteudo">
+      <header class="barra-superior">
+        <label class="busca-global" for="buscaDashboard">
+          <i data-lucide="search"></i>
+          <input id="buscaDashboard" type="search" placeholder="Buscar pedidos, clientes ou produtos..." autocomplete="off">
+        </label>
+        <div class="acoes-superiores">
+          <button class="notificacao" type="button" aria-label="Notificações"><i data-lucide="bell"></i><span></span></button>
+          <div class="perfil">
+            <div class="perfil-avatar" aria-hidden="true">MC</div>
+            <div><strong>Mukies Cookies</strong><small>Confeitaria</small></div>
+            <i data-lucide="chevron-down" aria-hidden="true"></i>
+          </div>
+        </div>
+      </header>
+
+      <main class="pagina dashboard">
+        <section class="boas-vindas">
+          <div>
+            <div class="titulo-com-coracao"><h1>Olá! Bem-vinda de volta</h1><span>♡</span></div>
+            <p>Aqui está o resumo do seu negócio hoje.</p>
+          </div>
+          <div class="cookies-destaque" aria-hidden="true">
+            <img src="./imagens/cookie-chocolate.png" alt=""><img src="./imagens/cookie-classico.png" alt=""><img src="./imagens/cookie-doce-leite.png" alt="">
+          </div>
+        </section>
+
+        <div id="erroDashboard" class="aviso erro escondido" role="alert"></div>
+
+        <section class="cards-resumo" aria-label="Resumo do negócio">
+          <a class="card-resumo card-rosa" href="./paginas/produtos.html"><span class="icone-card emoji">🍪</span><span><strong id="totalProdutos">—</strong><small>Cookies cadastrados</small><em>Ver produtos <i data-lucide="arrow-right"></i></em></span></a>
+          <a class="card-resumo card-laranja" href="./paginas/pedidos.html"><span class="icone-card"><i data-lucide="clipboard-list"></i></span><span><strong id="pedidosPendentes">—</strong><small>Pedidos pendentes</small><em>Ver pedidos <i data-lucide="arrow-right"></i></em></span></a>
+          <a class="card-resumo card-verde" href="./paginas/pedidos.html"><span class="icone-card"><i data-lucide="chef-hat"></i></span><span><strong id="pedidosProntos">—</strong><small>Pedidos prontos</small><em>Ver pedidos <i data-lucide="arrow-right"></i></em></span></a>
+          <a class="card-resumo card-marrom" href="#relatorios"><span class="icone-card"><i data-lucide="badge-dollar-sign"></i></span><span><strong class="valor-card" id="totalVendido">—</strong><small>Total vendido</small><em>Ver relatórios <i data-lucide="arrow-right"></i></em></span></a>
+        </section>
+
+        <section class="grade-dashboard">
+          <article class="painel ultimos-pedidos">
+            <header class="cabecalho-painel"><h2><i data-lucide="clipboard-list"></i>Últimos pedidos</h2><a href="./paginas/pedidos.html">Ver todos <i data-lucide="arrow-right"></i></a></header>
+            <div class="tabela-dashboard"><table><thead><tr><th>Pedido</th><th>Cliente</th><th>Data</th><th>Status</th><th>Total</th></tr></thead><tbody id="ultimosPedidos"><tr><td colspan="5" class="estado-dashboard">Carregando pedidos...</td></tr></tbody></table></div>
+            <footer>♡ Dica: mantenha seus pedidos atualizados para encantar ainda mais seus clientes! ♡</footer>
+          </article>
+
+          <article class="painel painel-vendas" id="relatorios">
+            <header class="cabecalho-painel"><div><h2>Vendas dos últimos 7 dias</h2><p>Total: <strong id="totalSeteDias">—</strong></p></div><span class="periodo">7 dias <i data-lucide="chevron-down"></i></span></header>
+            <div class="grafico" id="graficoVendas" aria-label="Gráfico de vendas dos últimos sete dias"><div class="estado-dashboard">Carregando vendas...</div></div>
+          </article>
+        </section>
+
+        <section class="painel produtos-vendidos">
+          <header class="cabecalho-painel"><h2><i data-lucide="crown"></i>Produtos mais vendidos</h2><a href="./paginas/produtos.html">Ver todos os produtos <i data-lucide="arrow-right"></i></a></header>
+          <div class="grade-produtos" id="produtosMaisVendidos"><div class="estado-dashboard">Carregando produtos...</div></div>
+        </section>
+      </main>
+    </section>
+  </div>
+  <script src="./scripts/api.js"></script>
+  <script src="./scripts/dashboard.js"></script>
+</body>
 </html>
