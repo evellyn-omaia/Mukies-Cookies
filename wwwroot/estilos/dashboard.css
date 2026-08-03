@@ -1,6 +1,5 @@
 .pagina-dashboard .pagina { max-width: 1280px; padding-top: 30px; }
-.acoes-superiores, .boas-vindas, .cabecalho-painel, .card-resumo, .card-resumo > span:last-child { display: flex; align-items: center; }
-.acoes-superiores { gap: 18px; }
+.boas-vindas, .cabecalho-painel, .card-resumo, .card-resumo > span:last-child { display: flex; align-items: center; }
 .boas-vindas { min-height: 112px; justify-content: space-between; margin-bottom: 18px; }
 .boas-vindas h1 { font-size: 39px; }
 .boas-vindas p { margin: 9px 0 0; color: #8c604c; font-size: 16px; }

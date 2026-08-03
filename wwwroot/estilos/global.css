@@ -245,37 +245,6 @@ body.modal-aberto {
   color: #a8958d;
 }
 
-.notificacao {
-  position: relative;
-  display: grid;
-  width: 44px;
-  height: 44px;
-  place-items: center;
-  border: 0;
-  border-radius: 12px;
-  background: transparent;
-  color: #684235;
-}
-
-.notificacao:hover {
-  background: #fff0ea;
-}
-
-.notificacao svg {
-  width: 25px;
-}
-
-.notificacao span {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  width: 8px;
-  height: 8px;
-  border: 2px solid #fffdfb;
-  border-radius: 50%;
-  background: var(--rosa);
-}
-
 /* Conteúdo das páginas */
 .pagina {
   width: 100%;
@@ -603,10 +572,6 @@ body.modal-aberto {
     min-width: 0;
     height: 46px;
     flex: 1;
-  }
-
-  .notificacao {
-    flex: 0 0 44px;
   }
 
   .titulo-linha {
